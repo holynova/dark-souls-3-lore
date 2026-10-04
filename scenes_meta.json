@@ -2,60 +2,54 @@
   "scenes": [
     {
       "id": "scene-01",
-      "title": "序章 · 初火衰微与余灰苏醒",
-      "subtitle": "火渐熄，王不见王；无火余灰自棺中复苏",
-      "eyebrow": "PROLOGUE / THE CEMETERY OF ASH",
-      "image": "assets/images/scene01_awakening.jpg",
-      "narration": "火渐熄，王不见王。当最初的薪火再次衰微，洛斯里克的钟声响彻荒原。那些曾经为了传火燃烧自身、却力有不逮化为尘埃的无火余灰，自沉睡千年的墓穴中再次苏醒。"
+      "title": "起源与前因 · 葛温的万年诅咒",
+      "eyebrow": "TIMELINE 01 / ORIGIN OF THE CURSE",
+      "image": "assets/images/nano_gwyn.jpg",
+      "narration": "很多朋友看黑魂总觉得神神叨叨看不懂，其实黑魂三的底层逻辑极其硬核！一切前因都要回到最初：神王葛温为了维系神权统治，强行把自己当柴烧、开启了传火诅咒！从此天地定下规矩：初火每隔千年就会熄灭，必须找强大的王者献祭自身去给世界续命！"
     },
     {
       "id": "scene-02",
-      "title": "祭祀场 · 弃座而去的诸王",
-      "subtitle": "五座石质王座空悬，防火女静候灰烬到来",
-      "eyebrow": "CHAPTER I / FIRELINK SHRINE",
+      "title": "黑魂3危机 · 薪王集体罢工跑路",
+      "eyebrow": "TIMELINE 02 / THE CRISIS & DESERTION",
       "image": "assets/images/scene02_firelink.jpg",
-      "narration": "传火祭祀场中，高耸的五座王座如今大多空空如也。为了维系濒临崩溃的世界，昔日薪王被钟声唤醒，然而他们却选择背弃宿命，逃离传火的使命，回到了各自荒芜的故土。"
+      "narration": "到了黑魂三的时代，初火已经被榨得连渣都不剩了！现任王室双王子直接摆烂拒绝传火。祭祀场急得拉响最高警报，敲响古钟，把以前烧过一次的四个老薪王从坟墓里强行叫醒返工！结果这帮大佬一看：又想烧我？老子早就不干了！全体罢工，各自跑回老家！"
     },
     {
       "id": "scene-03",
-      "title": "诸王悲歌 · 逃离宿命的薪王们",
-      "subtitle": "不死队深渊相残 · 尤姆独守废墟 · 双王子厌恶轮回",
-      "eyebrow": "CHAPTER II / LORDS OF CINDER",
+      "title": "四大薪王档案 · 为何宁死不回王座",
+      "eyebrow": "TIMELINE 03 / THE 4 LORDS DOSSIER",
       "image": "assets/images/scene03_lords.jpg",
-      "narration": "法兰不死队在深渊的侵蚀中刀剑相向、自相残杀；巨人尤姆在罪业之都的废墟中独守空亡与悲愿；吞噬神明的埃尔德里奇狂热地追寻深海时代；而洛斯里克双王子，则彻底厌倦了神权的诅咒与传火的荒诞轮回。"
+      "narration": "为什么他们宁可去死也不回王座？因为全是血泪教训！法兰不死队为了斩深渊喝下狼血，结果自己被深渊污染，天天在老巢互砍；巨人尤姆为了保全臣民去传火，回来却发现满城百姓被烧成黑炭，心死如灰；埃尔德里奇预见火灭后是深海时代，直接叛变吞噬神明；而双王子更是看透了神权谎言，誓死不当耗材！"
     },
     {
       "id": "scene-04",
-      "title": "猎王之誓 · 柴薪归座与最初火炉",
-      "subtitle": "余灰踏碎诸神，四大柴薪燃起通往火炉的通路",
-      "eyebrow": "CHAPTER III / GATHERING OF CINDERS",
+      "title": "保底机制 · 叫醒灰烬强制催债",
+      "eyebrow": "TIMELINE 04 / ASHEN ONE AWAKENS",
       "image": "assets/images/scene04_ritual.jpg",
-      "narration": "余灰虽被世人鄙夷为无火无光之物，却唯有他们踏上猎王之路。斩杀薪王，集齐四大柴薪，置于祭祀场的王座之上。当余火再度激荡，通往最初火炉的道路轰然开启。"
+      "narration": "薪王全跑了怎么办？体制只能启动终极应急预案：唤醒无火余灰！余灰是什么？就是当年连当柴资格都没有、直接烧成飞灰的淘汰者！但余灰目标极其纯粹：既然薪王不肯自己走回王座，那就踏遍世界把他们全砍了，把柴薪强行按在王座上！当四大柴薪共鸣，通往最初火炉的道路轰然打开！"
     },
     {
       "id": "scene-05",
-      "title": "终局之战 · 薪王化身与暗日绝境",
-      "subtitle": "时空尽头的流血暗日，万千传火者灵魂的最终对决",
-      "eyebrow": "CHAPTER IV / SOUL OF CINDER",
+      "title": "终极决战 · 薪王化身与流血暗日",
+      "eyebrow": "TIMELINE 05 / KILN & SOUL OF CINDER",
       "image": "assets/images/scene05_kiln.jpg",
-      "narration": "在世界的尽头，天空悬挂着流淌着暗色余晖的暗黑之环。最后的守门人——薪王们的化身，是千百年来所有传火者灵魂的聚合体。当凄凉的钢琴三连音响起，无数宿命的悲壮在此刻交织碰撞。"
+      "narration": "来到世界尽头的初始火炉，天上挂着流血的黑暗之环日蚀，整部传火史的苍凉在此凝固！最后的守门人薪王们的化身，是初代葛温与千万代传火英雄执念的集合体！击败他，就是战胜过去千万年传火的执念！当二阶段哀伤的钢琴三连音响起，无数宿命的悲壮在此刻彻底引爆！"
     },
     {
       "id": "scene-06",
-      "title": "火的归宿 · 熄灭初火与微小的余愿",
-      "subtitle": "初火熄灭，黑暗降临，但在遥远的未来必有微火诞生",
-      "eyebrow": "EPILOGUE / THE END OF FIRE",
+      "title": "终局抉择 · 熄灭初火与破晓新生",
+      "eyebrow": "TIMELINE 06 / THE END OF FIRE",
       "image": "assets/images/scene06_firekeeper.jpg",
-      "narration": "初火终有熄灭的一天。当防火女轻轻捧起那微弱如萤火的余烬，世界终于迎来了静谧的黑暗。但正如她所言：在极其漫长的黑暗尽头，终会有一日，微小的火苗会再度诞生。"
+      "narration": "击败化身后，世界的命运交到你手中！继续传火？初火早已油尽灯枯，坐上去只能冒几点可怜的火星，毫无意义！真正的解脱是把初火交给防火女：让这烧了几万年的病态诅咒彻底熄灭！世界迎来宁静的黑夜，正如防火女所言：在漫长的黑暗尽头，终会有一日，微小的火苗会再度诞生！"
     }
   ],
   "durations": {
-    "scene-01": 16.99,
-    "scene-02": 16.34,
-    "scene-03": 20.42,
-    "scene-04": 16.27,
-    "scene-05": 18.53,
-    "scene-06": 17.23
+    "scene-01": 23.95,
+    "scene-02": 25.54,
+    "scene-03": 29.57,
+    "scene-04": 27.7,
+    "scene-05": 26.02,
+    "scene-06": 28.06
   },
-  "total_duration": 105.79
+  "total_duration": 160.82
 }

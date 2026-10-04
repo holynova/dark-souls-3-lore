@@ -2,10 +2,11 @@ import json
 from pathlib import Path
 
 ROOT = Path('/Users/sym/Code/dark-souls-3-lore')
-meta = json.loads((ROOT / 'scenes_meta.json').read_text())
+OUT_DIR = ROOT / 'compositions'
+OUT_DIR.mkdir(exist_ok=True)
 
 # Common CSS & styling for Dark Souls 3 gothic aesthetic
-DS3_COMMON_CSS = """
+COMMON_CSS = """
   @font-face {
     font-family: LabChinese;
     src: url('assets/PingFang.ttc');
@@ -14,7 +15,7 @@ DS3_COMMON_CSS = """
   #root {
     position: absolute;
     inset: 0;
-    background: #08090d;
+    background: #06080d;
     color: #f1f5f9;
     font-family: LabChinese, -apple-system, sans-serif;
     overflow: hidden;
@@ -28,52 +29,62 @@ DS3_COMMON_CSS = """
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0.42;
-    filter: brightness(0.85) contrast(1.15) saturate(1.1);
+    opacity: 0.38;
+    filter: brightness(0.78) contrast(1.2) saturate(1.1);
   }
   .bg-overlay {
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at 50% 40%, rgba(8,9,13,0.3) 0%, rgba(6,7,10,0.92) 80%);
+    background: radial-gradient(circle at 50% 35%, rgba(6,8,13,0.3) 0%, rgba(5,6,9,0.92) 80%);
   }
   .ember-glow {
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at 50% 85%, rgba(245, 158, 11, 0.12) 0%, transparent 60%);
+    background: radial-gradient(circle at 50% 90%, rgba(245, 158, 11, 0.12) 0%, transparent 60%);
     pointer-events: none;
   }
 
-  /* Top Navigation */
-  .header {
+  /* Global Timeline Rail */
+  .timeline-rail {
     position: absolute;
     left: 80px;
-    top: 48px;
     right: 80px;
+    top: 36px;
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: center;
-    z-index: 10;
+    z-index: 15;
   }
-  .badge-chapter {
-    display: inline-flex;
+  .timeline-steps {
+    display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 8px 22px;
-    border-radius: 30px;
-    background: rgba(245, 158, 11, 0.16);
-    border: 1.5px solid rgba(245, 158, 11, 0.45);
+    gap: 8px;
+  }
+  .timeline-node {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #64748b;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .timeline-node.active {
+    background: rgba(245, 158, 11, 0.2);
     color: #fbbf24;
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+    border-color: rgba(245, 158, 11, 0.6);
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.25);
+  }
+  .timeline-arrow {
+    color: #475569;
+    font-size: 14px;
   }
   .topic-tag {
-    font-size: 22px;
+    font-size: 18px;
     color: #94a3b8;
     letter-spacing: 2px;
-    text-transform: uppercase;
-    font-weight: 500;
+    font-weight: 600;
   }
 
   /* Hero Title Area */
@@ -81,1099 +92,1192 @@ DS3_COMMON_CSS = """
     position: absolute;
     left: 80px;
     right: 80px;
-    top: 120px;
-    text-align: center;
+    top: 96px;
     z-index: 10;
   }
   .main-title {
-    font-size: 64px;
+    font-size: 54px;
     font-weight: 900;
-    line-height: 1.2;
+    line-height: 1.15;
     margin: 0;
-    letter-spacing: 3px;
-    background: linear-gradient(135deg, #ffffff 15%, #fde68a 50%, #f59e0b 85%, #d97706 100%);
+    letter-spacing: 2px;
+    background: linear-gradient(135deg, #ffffff 20%, #fde68a 55%, #f59e0b 85%, #d97706 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 6px 20px rgba(0,0,0,0.8));
+    filter: drop-shadow(0 4px 15px rgba(0,0,0,0.8));
   }
-  .sub-title {
-    font-size: 26px;
-    color: #cbd5e1;
-    margin-top: 12px;
-    font-weight: 400;
-    letter-spacing: 3px;
+  .sub-tagline {
+    font-size: 22px;
+    color: #e2e8f0;
+    margin-top: 8px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .tagline-badge {
+    padding: 3px 10px;
+    border-radius: 6px;
+    background: rgba(239, 68, 68, 0.2);
+    border: 1px solid rgba(239, 68, 68, 0.45);
+    color: #fca5a5;
+    font-size: 15px;
+    font-weight: 700;
   }
 
-  /* Cards Container */
-  .cards-grid {
+  /* Split Layout Container */
+  .content-split {
     position: absolute;
     left: 80px;
     right: 80px;
-    top: 275px;
-    height: 590px;
+    top: 225px;
+    bottom: 125px;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 32px;
+    gap: 36px;
     z-index: 10;
   }
-  .card-item {
-    flex: 1;
-    height: 100%;
-    border-radius: 20px;
-    padding: 32px 30px;
-    background: linear-gradient(160deg, rgba(22, 27, 38, 0.82) 0%, rgba(10, 12, 18, 0.94) 100%);
-    border: 1.5px solid rgba(245, 158, 11, 0.3);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.7), 0 0 25px rgba(245, 158, 11, 0.1);
-    backdrop-filter: blur(16px);
+
+  /* Left Flow / Logic Column */
+  .logic-column {
+    flex: 1.15;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    gap: 16px;
+  }
+  .logic-box {
+    background: linear-gradient(145deg, rgba(17, 24, 39, 0.85) 0%, rgba(9, 13, 22, 0.92) 100%);
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 20px 24px;
     position: relative;
-    overflow: hidden;
+    backdrop-filter: blur(14px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
   }
-  .card-item::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, transparent, #f59e0b, transparent);
+  .logic-box.highlight {
+    border-color: rgba(245, 158, 11, 0.5);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 0 25px rgba(245, 158, 11, 0.15);
   }
-
-  .card-top {
+  .logic-box.danger {
+    border-color: rgba(239, 68, 68, 0.5);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 0 25px rgba(239, 68, 68, 0.15);
+  }
+  .box-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    margin-bottom: 8px;
+    gap: 12px;
+    margin-bottom: 10px;
   }
-  .card-icon-title {
-    display: flex;
-    align-items: center;
-    gap: 14px;
+  .box-pill {
+    font-size: 14px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 6px;
+    letter-spacing: 1px;
   }
-  .card-icon {
-    font-size: 32px;
+  .box-pill.gold {
+    background: rgba(245, 158, 11, 0.25);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.4);
   }
-  .card-heading {
-    font-size: 28px;
+  .box-pill.red {
+    background: rgba(239, 68, 68, 0.25);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+  }
+  .box-pill.blue {
+    background: rgba(59, 130, 246, 0.25);
+    color: #93c5fd;
+    border: 1px solid rgba(59, 130, 246, 0.4);
+  }
+  .box-title {
+    font-size: 24px;
     font-weight: 800;
     color: #f8fafc;
     letter-spacing: 1px;
   }
-  .card-badge {
-    font-size: 16px;
-    font-weight: 700;
-    padding: 4px 12px;
-    border-radius: 12px;
-    background: rgba(245, 158, 11, 0.2);
-    color: #fbbf24;
-    border: 1px solid rgba(245, 158, 11, 0.4);
-    letter-spacing: 1px;
-  }
-
-  .card-quote {
-    font-size: 19px;
-    color: #fbbf24;
-    font-style: italic;
-    line-height: 1.4;
-    margin: 10px 0 14px 0;
-    padding-left: 14px;
-    border-left: 3px solid #f59e0b;
-  }
-
-  .card-details {
+  .box-bullets {
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    margin-top: 10px;
+    gap: 8px;
   }
-  .detail-row {
+  .bullet-item {
+    font-size: 18px;
+    line-height: 1.45;
+    color: #cbd5e1;
     display: flex;
     align-items: flex-start;
-    gap: 12px;
-    font-size: 19px;
-    line-height: 1.5;
-    color: #cbd5e1;
+    gap: 10px;
   }
-  .detail-bullet {
-    width: 8px;
-    height: 8px;
+  .bullet-dot {
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     background: #f59e0b;
-    box-shadow: 0 0 8px #f59e0b;
     margin-top: 10px;
     flex-shrink: 0;
   }
+  .bullet-item b {
+    color: #fbbf24;
+  }
+  .bullet-item.alert b {
+    color: #f87171;
+  }
 
-  .card-footer {
-    padding-top: 16px;
-    border-top: 1px solid rgba(255,255,255,0.08);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  /* Right Art Card Column */
+  .art-column {
+    flex: 0.85;
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 2px solid rgba(245, 158, 11, 0.35);
+    background: #0d111a;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.15);
+  }
+  .art-img-wrap {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  .art-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+  .art-gradient-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(6,8,13,0.1) 40%, rgba(6,8,13,0.95) 100%);
+  }
+  .art-info-overlay {
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    bottom: 24px;
+    z-index: 5;
+  }
+  .art-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    background: rgba(245, 158, 11, 0.25);
+    border: 1px solid rgba(245, 158, 11, 0.5);
+    color: #fbbf24;
+    margin-bottom: 8px;
+  }
+  .art-name {
+    font-size: 34px;
+    font-weight: 900;
+    color: #ffffff;
+    margin: 0 0 6px 0;
+    letter-spacing: 1.5px;
+    text-shadow: 0 3px 10px rgba(0,0,0,0.8);
+  }
+  .art-desc {
     font-size: 17px;
-    color: #94a3b8;
-  }
-  .footer-highlight {
-    color: #f59e0b;
-    font-weight: 600;
+    color: #cbd5e1;
+    line-height: 1.4;
+    margin: 0;
   }
 
-  /* Bottom Captions & Progress */
+  /* Bottom Floating Subtitle (No Progress Bar!) */
   .caption-container {
     position: absolute;
-    left: 100px;
-    right: 100px;
-    bottom: 35px;
-    height: 80px;
+    left: 80px;
+    right: 80px;
+    bottom: 28px;
+    height: 72px;
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 20;
+    z-index: 25;
   }
   .caption-box {
     position: absolute;
-    background: rgba(10, 13, 20, 0.92);
-    backdrop-filter: blur(14px);
-    border: 1.5px solid rgba(245, 158, 11, 0.4);
-    padding: 12px 42px;
+    background: rgba(8, 11, 18, 0.94);
+    backdrop-filter: blur(16px);
+    border: 1.5px solid rgba(245, 158, 11, 0.45);
+    padding: 14px 44px;
     border-radius: 40px;
-    font-size: 32px;
-    font-weight: 600;
+    font-size: 30px;
+    font-weight: 700;
     color: #ffffff;
-    box-shadow: 0 10px 35px rgba(0,0,0,0.8), 0 0 25px rgba(245, 158, 11, 0.15);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.85), 0 0 25px rgba(245, 158, 11, 0.2);
     text-align: center;
     white-space: nowrap;
+    letter-spacing: 1px;
   }
-  .progress-track {
+
+  /* Special Grid for Scene 3 (4 Lords) */
+  .grid-4-lords {
     position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 5px;
-    background: rgba(255,255,255,0.08);
-    z-index: 30;
+    left: 80px;
+    right: 80px;
+    top: 220px;
+    bottom: 125px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    z-index: 10;
   }
-  .progress-bar {
+  .lord-card {
+    background: linear-gradient(160deg, rgba(20, 26, 40, 0.88) 0%, rgba(10, 13, 20, 0.95) 100%);
+    border: 1.5px solid rgba(255, 255, 255, 0.12);
+    border-radius: 18px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(14px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.7);
+    position: relative;
+  }
+  .lord-card.active-glow {
+    border-color: rgba(245, 158, 11, 0.6);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 25px rgba(245, 158, 11, 0.2);
+  }
+  .lord-card-img-wrap {
+    height: 230px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  .lord-card-img {
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, #ea580c, #f59e0b, #fbbf24);
-    box-shadow: 0 0 10px #f59e0b;
-    transform-origin: left;
+    object-fit: cover;
+  }
+  .lord-card-content {
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    justify-content: space-between;
+  }
+  .lord-card-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0 0 6px 0;
+  }
+  .lord-card-badge {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 5px;
+    background: rgba(245, 158, 11, 0.2);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    margin-bottom: 10px;
+  }
+  .lord-card-bullets {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .lord-bullet {
+    font-size: 15px;
+    line-height: 1.4;
+    color: #cbd5e1;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .lord-bullet-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #f59e0b;
+    margin-top: 7px;
+    flex-shrink: 0;
+  }
+  .lord-bullet b {
+    color: #fbbf24;
   }
 """
 
-def generate_scene_01(dur):
-    return f"""<!doctype html>
+def generate_scene_01():
+    # Dur: 25.5s
+    # Audio: 23.95s (start 0.5s)
+    # Nano art: nano_gwyn.jpg
+    html = f"""<!doctype html>
 <html lang="zh-CN">
 <head><meta charset="UTF-8"></head>
 <body>
 <template>
 <style>
-{DS3_COMMON_CSS}
+{COMMON_CSS}
 </style>
-<div id="root" data-composition-id="scene-01" data-width="1920" data-height="1080">
+<div id="root" data-composition-id="scene-01" data-width="1920" data-height="1080" style="width:1920px;height:1080px;position:relative;overflow:hidden;">
   <div class="bg-wrap" data-layout-allow-overflow>
-    <img id="scene-01-bg" class="bg-img" src="assets/images/scene01_awakening.jpg" alt="Cemetery of Ash" data-layout-allow-overflow data-start="0" data-duration="{dur}">
+    <img id="scene-01-bg" class="bg-img" src="assets/images/scene01_awakening.jpg" data-layout-allow-overflow data-duration="25.5" />
     <div class="bg-overlay"></div>
     <div class="ember-glow"></div>
   </div>
 
-  <div class="header">
-    <div class="badge-chapter">🔥 PROLOGUE · 灰烬墓地</div>
-    <div class="topic-tag">DARK SOULS III · 传火史诗</div>
+  <div class="timeline-rail">
+    <div class="timeline-steps">
+      <div class="timeline-node active">01 葛温源头</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">02 薪王罢工</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">03 叛逃真相</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">04 余灰催债</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">05 终局决战</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">06 灭火破晓</div>
+    </div>
+    <div class="topic-tag">前因后果 · 宇宙级诅咒诞生</div>
   </div>
 
   <div class="title-area">
-    <h1 class="main-title">火渐熄 · 王不见王</h1>
-    <div class="sub-title">昔日初火衰微停滞，沉睡千年的无火余灰破棺而起</div>
+    <h1 class="main-title">起源与前因 · 葛温的万年诅咒</h1>
+    <div class="sub-tagline">
+      <span class="tagline-badge">万恶之源</span>
+      <span>并不是为了救世，而是神权为了永恒特权的自我献祭！</span>
+    </div>
   </div>
 
-  <div class="cards-grid">
-    <div id="scene-01-card-1" class="card-item">
-      <div>
-        <div class="card-top">
-          <div class="card-icon-title">
-            <span class="card-icon">🕯️</span>
-            <span class="card-heading">初火濒临熄灭</span>
-          </div>
-          <span class="card-badge">世界崩坏</span>
+  <div class="content-split">
+    <!-- Left Logic Flow -->
+    <div class="logic-column">
+      <div id="node-01-1" class="logic-box highlight">
+        <div class="box-header">
+          <span class="box-pill gold">起因 · 初火衰退</span>
+          <span class="box-title">统治危机：火熄则神权覆灭</span>
         </div>
-        <div class="card-quote">“当火光渐熄，唯有黑暗笼罩一切。”</div>
-        <div class="card-details">
-          <div class="detail-row"><span class="detail-bullet"></span><span>传火轮回历经千万载，初火衰竭殆尽</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>时空在洛斯里克汇聚挤压，世界趋向停滞</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>古老的钟声敲响，宣告世界末日的降临</span></div>
+        <div class="box-bullets">
+          <div class="bullet-item"><div class="bullet-dot"></div><span>初火诞生孕育了巨人和众神，<b>太阳王葛温</b>建立起至高统治。</span></div>
+          <div class="bullet-item"><div class="bullet-dot"></div><span>然而初火终有寿命，一旦熄灭，属于<b>人类与深渊的黑暗时代</b>必将来临。</span></div>
         </div>
       </div>
-      <div class="card-footer">
-        <span>天地异象</span>
-        <span class="footer-highlight">终末钟声鸣响</span>
+
+      <div id="node-01-2" class="logic-box danger">
+        <div class="box-header">
+          <span class="box-pill red">转折 · 以身饲火</span>
+          <span class="box-title">葛温投火：违背自然的极端血祭</span>
+        </div>
+        <div class="box-bullets">
+          <div class="bullet-item"><div class="bullet-dot"></div><span>因极度恐惧黑暗，葛温率领骑士前往初始火炉，<b>强行将自身神魂当柴烧</b>！</span></div>
+          <div class="bullet-item"><div class="bullet-dot"></div><span>初代薪王诞生，初火强行续命，但<b>自然生死法则自此彻底崩坏</b>！</span></div>
+        </div>
+      </div>
+
+      <div id="node-01-3" class="logic-box">
+        <div class="box-header">
+          <span class="box-pill blue">后果 · 诅咒套牢</span>
+          <span class="box-title">定下铁律：每隔千年必须献祭王者</span>
+        </div>
+        <div class="box-bullets">
+          <div class="bullet-item"><div class="bullet-dot"></div><span>初火每隔千年就会再次熄灭，必须抓捕最强王者<b>周而复始地自焚献祭</b>。</span></div>
+          <div class="bullet-item"><div class="bullet-dot"></div><span>人类被烙上不死人诅咒，世间生灵永受折磨——这正是<b>黑魂3危机的真正根源</b>！</span></div>
+        </div>
       </div>
     </div>
 
-    <div id="scene-01-card-2" class="card-item">
-      <div>
-        <div class="card-top">
-          <div class="card-icon-title">
-            <span class="card-icon">⚔️</span>
-            <span class="card-heading">无火的余灰</span>
-          </div>
-          <span class="card-badge">主角身份</span>
+    <!-- Right Art Card (Nano Gwyn Art) -->
+    <div id="art-01" class="art-column">
+      <div class="art-img-wrap" data-layout-allow-overflow>
+        <img id="nano-gwyn-img" class="art-img" src="assets/images/nano_gwyn.jpg" data-layout-allow-overflow data-duration="25.5" />
+        <div class="art-gradient-overlay"></div>
+        <div class="art-info-overlay">
+          <div class="art-badge">初代薪王 / 始作俑者</div>
+          <h2 class="art-name">太阳王 · 葛温</h2>
+          <p class="art-desc">
+            "为了维系神族的黄金幻象，他强行点燃了自身，却把整个世界拖入了永无止境的炼狱与枯竭！"
+          </p>
         </div>
-        <div class="card-quote">“连薪柴都不够资格燃烧的灰烬之躯。”</div>
-        <div class="card-details">
-          <div class="detail-row"><span class="detail-bullet"></span><span>曾经尝试传火却化为灰烬的不死人</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>不具柴薪资格，却对余火有着无尽渴望</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>被赋予最后猎王与挽救宿命的艰难重任</span></div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span>宿命烙印</span>
-        <span class="footer-highlight">追寻余火的灰烬</span>
-      </div>
-    </div>
-
-    <div id="scene-01-card-3" class="card-item">
-      <div>
-        <div class="card-top">
-          <div class="card-icon-title">
-            <span class="card-icon">🏰</span>
-            <span class="card-heading">洛斯里克高墙</span>
-          </div>
-          <span class="card-badge">王土沉沦</span>
-        </div>
-        <div class="card-quote">“漂泊王土的交汇处，通往火炉的险阻。”</div>
-        <div class="card-details">
-          <div class="detail-row"><span class="detail-bullet"></span><span>巍峨高墙自大地隆起，隔绝了诸王故地</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>骑士化为游魂，羽翼恶魔徘徊城头</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>灰烬走出墓地，踏上凶险莫测的征程</span></div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span>初始征途</span>
-        <span class="footer-highlight">踏出墓地之门</span>
       </div>
     </div>
   </div>
 
+  <!-- Captions -->
   <div class="caption-container">
-    <div id="c-01-1" class="caption-box" style="opacity: 0;">火渐熄，王不见王。</div>
-    <div id="c-01-2" class="caption-box" style="opacity: 0;">当最初的薪火再次衰微，洛斯里克的钟声响彻荒原。</div>
-    <div id="c-01-3" class="caption-box" style="opacity: 0;">那些曾经为了传火燃烧自身、却力有不逮化为尘埃的无火余灰，</div>
-    <div id="c-01-4" class="caption-box" style="opacity: 0;">自沉睡千年的墓穴中再次苏醒。</div>
+    <div id="c-01-1" class="caption-box" style="opacity: 0;">很多朋友看黑魂总觉得看不懂，其实黑魂三底层逻辑极其硬核！</div>
+    <div id="c-01-2" class="caption-box" style="opacity: 0;">一切前因回到最初：神王葛温为维系神权，强行以身投火开启诅咒！</div>
+    <div id="c-01-3" class="caption-box" style="opacity: 0;">从此天地定下规矩：初火每隔千年熄灭，必须献祭强者给世界续命！</div>
+    <div id="c-01-4" class="caption-box" style="opacity: 0;">这一场违背自然规律的万年循环，彻底拉开了黑魂三的残酷大幕！</div>
   </div>
-
-  <div class="progress-track"><div id="p-01" class="progress-bar"></div></div>
 </div>
 <script>
 {{
   const tl = gsap.timeline({{ paused: true }});
   
-  // Background Ken Burns
-  tl.fromTo("#scene-01-bg", {{ scale: 1.0, y: 0 }}, {{ scale: 1.08, y: -20, duration: {dur}, ease: "none" }}, 0);
-  
-  // Title & Header In
-  tl.fromTo(".header", {{ opacity: 0, y: -20 }}, {{ opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }}, 0.2);
-  tl.fromTo(".title-area", {{ opacity: 0, y: -25 }}, {{ opacity: 1, y: 0, duration: 1.0, ease: "power2.out" }}, 0.4);
-  
-  // Cards Stagger In
-  tl.fromTo("#scene-01-card-1", {{ opacity: 0, y: 40, scale: 0.96 }}, {{ opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.2)" }}, 0.8);
-  tl.fromTo("#scene-01-card-2", {{ opacity: 0, y: 40, scale: 0.96 }}, {{ opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.2)" }}, 1.2);
-  tl.fromTo("#scene-01-card-3", {{ opacity: 0, y: 40, scale: 0.96 }}, {{ opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.2)" }}, 1.6);
-  tl.to("#scene-01-card-1", {{ borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.35)", duration: 0.5 }}, 0.8)
-    .to("#scene-01-card-1", {{ borderColor: "rgba(245, 158, 11, 0.3)", boxShadow: "0 15px 40px rgba(0,0,0,0.7), 0 0 25px rgba(245, 158, 11, 0.1)", duration: 0.5 }}, 8.5)
-    .to("#scene-01-card-2", {{ borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.35)", duration: 0.5 }}, 8.5)
-    .to("#scene-01-card-2", {{ borderColor: "rgba(245, 158, 11, 0.3)", boxShadow: "0 15px 40px rgba(0,0,0,0.7), 0 0 25px rgba(245, 158, 11, 0.1)", duration: 0.5 }}, 13.8)
-    .to("#scene-01-card-3", {{ borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.35)", duration: 0.5 }}, 13.8);
+  // Background Pan
+  tl.fromTo("#scene-01-bg", {{ scale: 1.0, y: 0 }}, {{ scale: 1.08, y: -25, duration: 25.5, ease: "none" }}, 0);
+  tl.fromTo("#nano-gwyn-img", {{ scale: 1.05 }}, {{ scale: 1.15, duration: 25.5, ease: "none" }}, 0);
+
+  // Layout In
+  tl.fromTo(".timeline-rail", {{ opacity: 0, y: -15 }}, {{ opacity: 1, y: 0, duration: 0.6 }}, 0.2);
+  tl.fromTo(".title-area", {{ opacity: 0, y: -20 }}, {{ opacity: 1, y: 0, duration: 0.8 }}, 0.4);
+  tl.fromTo("#art-01", {{ opacity: 0, x: 40 }}, {{ opacity: 1, x: 0, duration: 0.9, ease: "power2.out" }}, 0.6);
+
+  // Nodes Sequence
+  tl.fromTo("#node-01-1", {{ opacity: 0, y: 25 }}, {{ opacity: 1, y: 0, duration: 0.6 }}, 0.8);
+  tl.fromTo("#node-01-2", {{ opacity: 0, y: 25 }}, {{ opacity: 1, y: 0, duration: 0.6 }}, 5.5);
+  tl.fromTo("#node-01-3", {{ opacity: 0, y: 25 }}, {{ opacity: 1, y: 0, duration: 0.6 }}, 13.0);
 
   // Captions
-  tl.set("#c-01-1", {{ opacity: 1 }}, 0.50).set("#c-01-1", {{ opacity: 0 }}, 3.80);
-  tl.set("#c-01-2", {{ opacity: 1 }}, 3.80).set("#c-01-2", {{ opacity: 0 }}, 8.50);
-  tl.set("#c-01-3", {{ opacity: 1 }}, 8.50).set("#c-01-3", {{ opacity: 0 }}, 13.80);
-  tl.set("#c-01-4", {{ opacity: 1 }}, 13.80).set("#c-01-4", {{ opacity: 0 }}, 17.50);
-
-  // Progress Bar
-  tl.fromTo("#p-01", {{ scaleX: 0 }}, {{ scaleX: 1, duration: {dur}, ease: "none" }}, 0);
+  tl.set("#c-01-1", {{ opacity: 1 }}, 0.50).set("#c-01-1", {{ opacity: 0 }}, 5.30);
+  tl.set("#c-01-2", {{ opacity: 1 }}, 5.50).set("#c-01-2", {{ opacity: 0 }}, 12.80);
+  tl.set("#c-01-3", {{ opacity: 1 }}, 13.00).set("#c-01-3", {{ opacity: 0 }}, 18.80);
+  tl.set("#c-01-4", {{ opacity: 1 }}, 19.00).set("#c-01-4", {{ opacity: 0 }}, 24.50);
 
   window.__timelines["scene-01"] = tl;
 }}
 </script>
 </template>
 </body>
-</html>"""
+</html>
+"""
+    (OUT_DIR / 'scene-01.html').write_text(html)
 
-def generate_scene_02(dur):
-    return f"""<!doctype html>
+def generate_scene_02():
+    # Dur: 27.0s
+    # Audio: 25.54s (start 0.5s)
+    # Nano art: nano_twin_princes.jpg / scene02_firelink.jpg
+    html = f"""<!doctype html>
 <html lang="zh-CN">
 <head><meta charset="UTF-8"></head>
 <body>
 <template>
 <style>
-{DS3_COMMON_CSS}
+{COMMON_CSS}
 </style>
-<div id="root" data-composition-id="scene-02" data-width="1920" data-height="1080">
+<div id="root" data-composition-id="scene-02" data-width="1920" data-height="1080" style="width:1920px;height:1080px;position:relative;overflow:hidden;">
   <div class="bg-wrap" data-layout-allow-overflow>
-    <img id="scene-02-bg" class="bg-img" src="assets/images/scene02_firelink.jpg" alt="Firelink Shrine" data-layout-allow-overflow data-start="0" data-duration="{dur}">
+    <img id="scene-02-bg" class="bg-img" src="assets/images/scene02_firelink.jpg" data-layout-allow-overflow data-duration="27.0" />
     <div class="bg-overlay"></div>
     <div class="ember-glow"></div>
   </div>
 
-  <div class="header">
-    <div class="badge-chapter">🔥 CHAPTER I · 传火祭祀场</div>
-    <div class="topic-tag">DARK SOULS III · 避难所与王座</div>
+  <div class="timeline-rail">
+    <div class="timeline-steps">
+      <div class="timeline-node">01 葛温源头</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node active">02 薪王罢工</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">03 叛逃真相</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">04 余灰催债</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">05 终局决战</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">06 灭火破晓</div>
+    </div>
+    <div class="topic-tag">黑魂3危机 · 体系全面暴雷</div>
   </div>
 
   <div class="title-area">
-    <h1 class="main-title">王座空悬 · 诸王背誓</h1>
-    <div class="sub-title">昔日传火诸王弃座而逃，唯有鲁道斯与盲眼防火女静候灰烬</div>
+    <h1 class="main-title">黑魂3危机 · 薪王集体罢工跑路</h1>
+    <div class="sub-tagline">
+      <span class="tagline-badge">系统崩溃</span>
+      <span>初火油尽灯枯！现任拒绝接盘，老将从坟里叫醒后全体撂挑子！</span>
+    </div>
   </div>
 
-  <div class="cards-grid">
-    <div id="scene-02-card-1" class="card-item">
-      <div>
-        <div class="card-top">
-          <div class="card-icon-title">
-            <span class="card-icon">🪑</span>
-            <span class="card-heading">宏伟的石质王座</span>
-          </div>
-          <span class="card-badge">五座王座</span>
+  <div class="content-split">
+    <!-- Left Logic Flow -->
+    <div class="logic-column">
+      <div id="node-02-1" class="logic-box danger">
+        <div class="box-header">
+          <span class="box-pill red">危机爆发 · 现任拒传</span>
+          <span class="box-title">双王子摆烂：我们不做神权耗材</span>
         </div>
-        <div class="card-quote">“刻着伟大薪王名号的宝座，如今尽是虚无。”</div>
-        <div class="card-details">
-          <div class="detail-row"><span class="detail-bullet"></span><span>环形祭祀场中立着五位薪王的石制王座</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>本应履行传火重责的诸王，纷纷潜逃故地</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>空旷的殿堂在微光中诉说着绝望与苍凉</span></div>
+        <div class="box-bullets">
+          <div class="bullet-item"><div class="bullet-dot"></div><span>初火被榨取万年已连渣都不剩，世界即将彻底断电。</span></div>
+          <div class="bullet-item"><div class="bullet-dot"></div><span>现任法定继承人<b>洛斯里克双王子</b>看透骗局，<b>坚决拒绝传火</b>！</span></div>
         </div>
       </div>
-      <div class="card-footer">
-        <span>祭祀场异象</span>
-        <span class="footer-highlight">王不见王</span>
+
+      <div id="node-02-2" class="logic-box highlight">
+        <div class="box-header">
+          <span class="box-pill gold">应急机制 · 掘墓返工</span>
+          <span class="box-title">钟声敲响：强行唤醒四大往昔薪王</span>
+        </div>
+        <div class="box-bullets">
+          <div class="bullet-item"><div class="bullet-dot"></div><span>传火祭祀场拉响最高警报，敲响荒原无主古钟。</span></div>
+          <div class="bullet-item"><div class="bullet-dot"></div><span>将历史上曾经自焚过一次的<b>四位大能薪王从棺椁中硬拉起来</b>！</span></div>
+        </div>
+      </div>
+
+      <div id="node-02-3" class="logic-box">
+        <div class="box-header">
+          <span class="box-pill blue">全面瘫痪 · 各自跑路</span>
+          <span class="box-title">大佬震怒：老子早就烧过一次，滚！</span>
+        </div>
+        <div class="box-bullets">
+          <div class="bullet-item alert"><div class="bullet-dot"></div><span><b>深渊监视者</b>回法兰互砍，<b>尤姆</b>回罪都封刀，<b>埃尔德里奇</b>去食神！</span></div>
+          <div class="bullet-item"><div class="bullet-dot"></div><span>四大王座彻底空悬，世界灭绝进入最后倒计时！</span></div>
+        </div>
       </div>
     </div>
 
-    <div id="scene-02-card-2" class="card-item">
-      <div>
-        <div class="card-top">
-          <div class="card-icon-title">
-            <span class="card-icon">👑</span>
-            <span class="card-heading">放逐者鲁道斯</span>
-          </div>
-          <span class="card-badge">唯一留守</span>
+    <!-- Right Art Card (Nano Twin Princes) -->
+    <div id="art-02" class="art-column">
+      <div class="art-img-wrap" data-layout-allow-overflow>
+        <img id="nano-princes-img" class="art-img" src="assets/images/nano_twin_princes.jpg" data-layout-allow-overflow data-duration="27.0" />
+        <div class="art-gradient-overlay"></div>
+        <div class="art-info-overlay">
+          <div class="art-badge">罢工领头人 / 现任王子</div>
+          <h2 class="art-name">洛斯里克 & 洛里安</h2>
+          <p class="art-desc">
+            "王位是可悲的诅咒，传火不过是谎言。我们选择在城堡最深处，静静注视火的熄灭！"
+          </p>
         </div>
-        <div class="card-quote">“即使身材矮小，我亦是实实在在的薪王。”</div>
-        <div class="card-details">
-          <div class="detail-row"><span class="detail-bullet"></span><span>唯有库尔兰的鲁道斯独自端坐于王座之上</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>精通灵魂炼成技艺，洞悉火之时代的残酷</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>自愿再次化为柴薪，等待最后的一刻</span></div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span>坚定意志</span>
-        <span class="footer-highlight">静待薪尽火灭</span>
-      </div>
-    </div>
-
-    <div id="scene-02-card-3" class="card-item">
-      <div>
-        <div class="card-top">
-          <div class="card-icon-title">
-            <span class="card-icon">👁️</span>
-            <span class="card-heading">盲眼防火女</span>
-          </div>
-          <span class="card-badge">营火侍从</span>
-        </div>
-        <div class="card-quote">“愿余火引导灰烬大人的道路。”</div>
-        <div class="card-details">
-          <div class="detail-row"><span class="detail-bullet"></span><span>眼蒙银质冠冕，守护螺旋剑插落的篝火</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>将游离无主的灵魂转化为灰烬力量的源泉</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>默默见证无数灰烬的出发、沉沦与新生</span></div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span>神圣契约</span>
-        <span class="footer-highlight">守候营火余温</span>
       </div>
     </div>
   </div>
 
+  <!-- Captions -->
   <div class="caption-container">
-    <div id="c-02-1" class="caption-box" style="opacity: 0;">传火祭祀场中，高耸的五座王座如今大多空空如也。</div>
-    <div id="c-02-2" class="caption-box" style="opacity: 0;">为了维系濒临崩溃的世界，昔日薪王被钟声唤醒，</div>
-    <div id="c-02-3" class="caption-box" style="opacity: 0;">然而他们却选择背弃宿命，逃离传火的使命，回到了各自荒芜的故土。</div>
+    <div id="c-02-1" class="caption-box" style="opacity: 0;">到了黑魂三的时代，初火已经被榨得连渣都不剩了！</div>
+    <div id="c-02-2" class="caption-box" style="opacity: 0;">现任王室双王子直接摆烂，看透骗局拒绝传火！</div>
+    <div id="c-02-3" class="caption-box" style="opacity: 0;">祭祀场敲响古钟拉响最高警报，强行掘墓叫醒四个老薪王返工！</div>
+    <div id="c-02-4" class="caption-box" style="opacity: 0;">结果薪王们集体罢工：老子早就烧过一次，绝不回炉当柴！</div>
   </div>
-
-  <div class="progress-track"><div id="p-02" class="progress-bar"></div></div>
 </div>
 <script>
 {{
   const tl = gsap.timeline({{ paused: true }});
   
-  // Background Ken Burns
-  tl.fromTo("#scene-02-bg", {{ scale: 1.0, x: 0 }}, {{ scale: 1.07, x: -15, duration: {dur}, ease: "none" }}, 0);
-  
-  // Headers
-  tl.fromTo(".header", {{ opacity: 0, y: -20 }}, {{ opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }}, 0.2);
-  tl.fromTo(".title-area", {{ opacity: 0, y: -25 }}, {{ opacity: 1, y: 0, duration: 1.0, ease: "power2.out" }}, 0.4);
-  
-  // Cards Stagger In
-  tl.fromTo("#scene-02-card-1", {{ opacity: 0, y: 40, scale: 0.96 }}, {{ opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.2)" }}, 0.8);
-  tl.fromTo("#scene-02-card-2", {{ opacity: 0, y: 40, scale: 0.96 }}, {{ opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.2)" }}, 1.2);
-  tl.fromTo("#scene-02-card-3", {{ opacity: 0, y: 40, scale: 0.96 }}, {{ opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.2)" }}, 1.6);
-  tl.to("#scene-02-card-1", {{ borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.35)", duration: 0.5 }}, 0.8)
-    .to("#scene-02-card-1", {{ borderColor: "rgba(245, 158, 11, 0.3)", boxShadow: "0 15px 40px rgba(0,0,0,0.7), 0 0 25px rgba(245, 158, 11, 0.1)", duration: 0.5 }}, 4.8)
-    .to("#scene-02-card-2", {{ borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.35)", duration: 0.5 }}, 4.8)
-    .to("#scene-02-card-2", {{ borderColor: "rgba(245, 158, 11, 0.3)", boxShadow: "0 15px 40px rgba(0,0,0,0.7), 0 0 25px rgba(245, 158, 11, 0.1)", duration: 0.5 }}, 10.2)
-    .to("#scene-02-card-3", {{ borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.35)", duration: 0.5 }}, 10.2);
+  // Background Pan
+  tl.fromTo("#scene-02-bg", {{ scale: 1.0, y: 0 }}, {{ scale: 1.07, y: -20, duration: 27.0, ease: "none" }}, 0);
+  tl.fromTo("#nano-princes-img", {{ scale: 1.05 }}, {{ scale: 1.14, duration: 27.0, ease: "none" }}, 0);
+
+  // Layout In
+  tl.fromTo(".timeline-rail", {{ opacity: 0, y: -15 }}, {{ opacity: 1, y: 0, duration: 0.6 }}, 0.2);
+  tl.fromTo(".title-area", {{ opacity: 0, y: -20 }}, {{ opacity: 1, y: 0, duration: 0.8 }}, 0.4);
+  tl.fromTo("#art-02", {{ opacity: 0, x: 40 }}, {{ opacity: 1, x: 0, duration: 0.9, ease: "power2.out" }}, 0.6);
+
+  // Nodes Sequence
+  tl.fromTo("#node-02-1", {{ opacity: 0, y: 25 }}, {{ opacity: 1, y: 0, duration: 0.6 }}, 0.8);
+  tl.fromTo("#node-02-2", {{ opacity: 0, y: 25 }}, {{ opacity: 1, y: 0, duration: 0.6 }}, 11.2);
+  tl.fromTo("#node-02-3", {{ opacity: 0, y: 25 }}, {{ opacity: 1, y: 0, duration: 0.6 }}, 18.5);
 
   // Captions
-  tl.set("#c-02-1", {{ opacity: 1 }}, 0.50).set("#c-02-1", {{ opacity: 0 }}, 4.80);
-  tl.set("#c-02-2", {{ opacity: 1 }}, 4.80).set("#c-02-2", {{ opacity: 0 }}, 10.20);
-  tl.set("#c-02-3", {{ opacity: 1 }}, 10.20).set("#c-02-3", {{ opacity: 0 }}, 16.80);
-
-  // Progress Bar
-  tl.fromTo("#p-02", {{ scaleX: 0 }}, {{ scaleX: 1, duration: {dur}, ease: "none" }}, 0);
+  tl.set("#c-02-1", {{ opacity: 1 }}, 0.50).set("#c-02-1", {{ opacity: 0 }}, 5.60);
+  tl.set("#c-02-2", {{ opacity: 1 }}, 5.80).set("#c-02-2", {{ opacity: 0 }}, 11.00);
+  tl.set("#c-02-3", {{ opacity: 1 }}, 11.20).set("#c-02-3", {{ opacity: 0 }}, 18.20);
+  tl.set("#c-02-4", {{ opacity: 1 }}, 18.50).set("#c-02-4", {{ opacity: 0 }}, 26.00);
 
   window.__timelines["scene-02"] = tl;
 }}
 </script>
 </template>
 </body>
-</html>"""
+</html>
+"""
+    (OUT_DIR / 'scene-02.html').write_text(html)
 
-def generate_scene_03(dur):
-    return f"""<!doctype html>
+def generate_scene_03():
+    # Dur: 31.0s
+    # Audio: 29.57s (start 0.5s)
+    # Nano art: nano_abyss_watchers.jpg, nano_yhorm.jpg, nano_aldrich.jpg, nano_twin_princes.jpg
+    html = f"""<!doctype html>
 <html lang="zh-CN">
 <head><meta charset="UTF-8"></head>
 <body>
 <template>
 <style>
-{DS3_COMMON_CSS}
-  .cards-grid-4 {{
-    position: absolute;
-    left: 80px;
-    right: 80px;
-    top: 275px;
-    height: 590px;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
-    z-index: 10;
-  }}
+{COMMON_CSS}
 </style>
-<div id="root" data-composition-id="scene-03" data-width="1920" data-height="1080">
+<div id="root" data-composition-id="scene-03" data-width="1920" data-height="1080" style="width:1920px;height:1080px;position:relative;overflow:hidden;">
   <div class="bg-wrap" data-layout-allow-overflow>
-    <img id="scene-03-bg" class="bg-img" src="assets/images/scene03_lords.jpg" alt="Lords of Cinder" data-layout-allow-overflow data-start="0" data-duration="{dur}">
+    <img id="scene-03-bg" class="bg-img" src="assets/images/scene03_lords.jpg" data-layout-allow-overflow data-duration="31.0" />
     <div class="bg-overlay"></div>
     <div class="ember-glow"></div>
   </div>
 
-  <div class="header">
-    <div class="badge-chapter">🔥 CHAPTER II · 诸王悲歌</div>
-    <div class="topic-tag">DARK SOULS III · 叛离的四大薪王</div>
+  <div class="timeline-rail">
+    <div class="timeline-steps">
+      <div class="timeline-node">01 葛温源头</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">02 薪王罢工</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node active">03 叛逃真相</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">04 余灰催债</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">05 终局决战</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">06 灭火破晓</div>
+    </div>
+    <div class="topic-tag">深层机理 · 四大薪王档案</div>
   </div>
 
   <div class="title-area">
-    <h1 class="main-title">诸王悲歌 · 逃离传火宿命</h1>
-    <div class="sub-title">深渊侵蚀、保护落空、追逐暗潮与厌弃轮回——每位薪王皆有拒绝的绝望</div>
+    <h1 class="main-title">四大薪王档案 · 为何宁死不回王座</h1>
+    <div class="sub-tagline">
+      <span class="tagline-badge">血泪教训</span>
+      <span>他们每一个都曾全力以赴，换来的却是毁灭、背叛与永恒痛苦！</span>
+    </div>
   </div>
 
-  <div class="cards-grid-4">
-    <div id="scene-03-card-1" class="card-item">
-      <div>
-        <div class="card-top">
-          <div class="card-icon-title">
-            <span class="card-icon">🐺</span>
-            <span class="card-heading">法兰不死队</span>
+  <!-- 4 Columns Grid showcasing Nano Arts -->
+  <div class="grid-4-lords">
+    <!-- Lord 1: Abyss Watchers -->
+    <div id="lord-card-1" class="lord-card">
+      <div class="lord-card-img-wrap" data-layout-allow-overflow>
+        <img class="lord-card-img" src="assets/images/nano_abyss_watchers.jpg" data-layout-allow-overflow data-duration="31.0" />
+      </div>
+      <div class="lord-card-content">
+        <div>
+          <span class="lord-card-badge">法兰要塞</span>
+          <h3 class="lord-card-title">法兰不死队</h3>
+          <div class="lord-card-bullets">
+            <div class="lord-bullet"><div class="lord-bullet-dot"></div><span>饮狼血立誓<b>诛灭深渊</b></span></div>
+            <div class="lord-bullet"><div class="lord-bullet-dot"></div><span>自身却反遭深渊恶兆污染</span></div>
+            <div class="lord-bullet"><div class="lord-bullet-dot"></div><span>在老巢陷入<b>永恒同门互砍</b></span></div>
           </div>
         </div>
-        <span class="card-badge">深渊监视者</span>
-        <div class="card-quote">“饮下狼血誓言，终困深渊泥潭。”</div>
-        <div class="card-details">
-          <div class="detail-row"><span class="detail-bullet"></span><span>以法兰狼血维系誓约，监视深渊迹象</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>体内血液终遭深渊污染，灵柩前骨肉相残</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>不死之身陷入无休止的内耗互杀地狱</span></div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span>悲剧结局</span>
-        <span class="footer-highlight">永恒自残</span>
       </div>
     </div>
 
-    <div id="scene-03-card-2" class="card-item">
-      <div>
-        <div class="card-top">
-          <div class="card-icon-title">
-            <span class="card-icon">🛡️</span>
-            <span class="card-heading">巨人尤姆</span>
+    <!-- Lord 2: Yhorm the Giant -->
+    <div id="lord-card-2" class="lord-card">
+      <div class="lord-card-img-wrap" data-layout-allow-overflow>
+        <img class="lord-card-img" src="assets/images/nano_yhorm.jpg" data-layout-allow-overflow data-duration="31.0" />
+      </div>
+      <div class="lord-card-content">
+        <div>
+          <span class="lord-card-badge">罪业之都</span>
+          <h3 class="lord-card-title">巨人尤姆</h3>
+          <div class="lord-card-bullets">
+            <div class="lord-bullet"><div class="lord-bullet-dot"></div><span>以异族之躯<b>守护人族臣民</b></span></div>
+            <div class="lord-bullet"><div class="lord-bullet-dot"></div><span>舍身传火试图平息罪火暴动</span></div>
+            <div class="lord-bullet"><div class="lord-bullet-dot"></div><span>归来满城百姓<b>全部烧成黑炭</b></span></div>
           </div>
         </div>
-        <span class="card-badge">孤独守护者</span>
-        <div class="card-quote">“为了守护子民传火，归来唯余焦土。”</div>
-        <div class="card-details">
-          <div class="detail-row"><span class="detail-bullet"></span><span>身为异族巨人，却誓死庇护罪业之都人类</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>投身传火欲压制罪业火焰，却引发焚城浩劫</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>孤坐尸山王座，舍弃大盾心如死灰</span></div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span>昔日友人</span>
-        <span class="footer-highlight">洋葱骑士的约定</span>
       </div>
     </div>
 
-    <div id="scene-03-card-3" class="card-item">
-      <div>
-        <div class="card-top">
-          <div class="card-icon-title">
-            <span class="card-icon">🌊</span>
-            <span class="card-heading">埃尔德里奇</span>
+    <!-- Lord 3: Aldrich -->
+    <div id="lord-card-3" class="lord-card">
+      <div class="lord-card-img-wrap" data-layout-allow-overflow>
+        <img class="lord-card-img" src="assets/images/nano_aldrich.jpg" data-layout-allow-overflow data-duration="31.0" />
+      </div>
+      <div class="lord-card-content">
+        <div>
+          <span class="lord-card-badge">幽邃教堂</span>
+          <h3 class="lord-card-title">噬神者·埃尔德里奇</h3>
+          <div class="lord-card-bullets">
+            <div class="lord-bullet"><div class="lord-bullet-dot"></div><span>预见初火必熄，<b>深海时代</b>降临</span></div>
+            <div class="lord-bullet"><div class="lord-bullet-dot"></div><span>彻底抛弃传火神圣幻象</span></div>
+            <div class="lord-bullet"><div class="lord-bullet-dot"></div><span>直接攻入王城<b>吞噬葛温幺子</b></span></div>
           </div>
         </div>
-        <span class="card-badge">吞噬神明者</span>
-        <div class="card-quote">“预见火熄深海，吞噬神体追寻暗潮。”</div>
-        <div class="card-details">
-          <div class="detail-row"><span class="detail-bullet"></span><span>幽邃教堂圣职，因噬人恶习化为污秽泥泞</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>梦见火熄之后的“深海时代”，抛弃初火信仰</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>进军废弃王城亚诺尔隆德，残忍吞噬暗月之神</span></div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span>狂热狂信</span>
-        <span class="footer-highlight">深海幽邃时代</span>
       </div>
     </div>
 
-    <div id="scene-03-card-4" class="card-item">
-      <div>
-        <div class="card-top">
-          <div class="card-icon-title">
-            <span class="card-icon">👑</span>
-            <span class="card-heading">双王子</span>
+    <!-- Lord 4: Twin Princes -->
+    <div id="lord-card-4" class="lord-card">
+      <div class="lord-card-img-wrap" data-layout-allow-overflow>
+        <img class="lord-card-img" src="assets/images/nano_twin_princes.jpg" data-layout-allow-overflow data-duration="31.0" />
+      </div>
+      <div class="lord-card-content">
+        <div>
+          <span class="lord-card-badge">大书库顶层</span>
+          <h3 class="lord-card-title">洛斯里克双王子</h3>
+          <div class="lord-card-bullets">
+            <div class="lord-bullet"><div class="lord-bullet-dot"></div><span>自幼受尽王室配种<b>血脉折磨</b></span></div>
+            <div class="lord-bullet"><div class="lord-bullet-dot"></div><span>看透神权血祭的荒谬虚妄</span></div>
+            <div class="lord-bullet"><div class="lord-bullet-dot"></div><span><b>誓不当柴</b>，冷眼坐看火灭</span></div>
           </div>
         </div>
-        <span class="card-badge">王室血脉</span>
-        <div class="card-quote">“传火不过是诅咒，请容我们在此安睡。”</div>
-        <div class="card-details">
-          <div class="detail-row"><span class="detail-bullet"></span><span>洛斯里克王室为制造完美柴薪不择手段</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>王子双双残疾受咒，看透神权虚伪谎言</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>誓死拒绝登上薪王宝座，静待初火自灭</span></div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span>决然反抗</span>
-        <span class="footer-highlight">断绝传火血脉</span>
       </div>
     </div>
   </div>
 
+  <!-- Captions -->
   <div class="caption-container">
-    <div id="c-03-1" class="caption-box" style="opacity: 0;">法兰不死队在深渊的侵蚀中刀剑相向、自相残杀；</div>
-    <div id="c-03-2" class="caption-box" style="opacity: 0;">巨人尤姆在罪业之都的废墟中独守空亡与悲愿；</div>
-    <div id="c-03-3" class="caption-box" style="opacity: 0;">吞噬神明的埃尔德里奇狂热地追寻深海时代；</div>
-    <div id="c-03-4" class="caption-box" style="opacity: 0;">而洛斯里克双王子，则彻底厌倦了神权的诅咒与传火的荒诞轮回。</div>
+    <div id="c-03-1" class="caption-box" style="opacity: 0;">为什么薪王宁可去死也不回王座？因为全都是血泪教训！</div>
+    <div id="c-03-2" class="caption-box" style="opacity: 0;">法兰不死队饮狼血斩深渊反遭侵蚀，陷入永恒同门自残！</div>
+    <div id="c-03-3" class="caption-box" style="opacity: 0;">巨人尤姆为臣民传火，归来却见满城化为黑炭，万念俱灰！</div>
+    <div id="c-03-4" class="caption-box" style="opacity: 0;">埃尔德里奇预见深海时代，叛变吞食神明寻求蜕变！</div>
+    <div id="c-03-5" class="caption-box" style="opacity: 0;">双王子自幼受尽血脉诅咒，看透神权谎言，誓死拒当耗材！</div>
   </div>
-
-  <div class="progress-track"><div id="p-03" class="progress-bar"></div></div>
 </div>
 <script>
 {{
   const tl = gsap.timeline({{ paused: true }});
   
-  // Background Ken Burns
-  tl.fromTo("#scene-03-bg", {{ scale: 1.05, y: 0 }}, {{ scale: 1.0, y: 15, duration: {dur}, ease: "none" }}, 0);
-  
-  // Headers
-  tl.fromTo(".header", {{ opacity: 0, y: -20 }}, {{ opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }}, 0.2);
-  tl.fromTo(".title-area", {{ opacity: 0, y: -25 }}, {{ opacity: 1, y: 0, duration: 1.0, ease: "power2.out" }}, 0.4);
-  
-  // Cards Stagger In
-  tl.fromTo("#scene-03-card-1", {{ opacity: 0, y: 40, scale: 0.95 }}, {{ opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "back.out(1.2)" }}, 0.5);
-  tl.fromTo("#scene-03-card-2", {{ opacity: 0, y: 40, scale: 0.95 }}, {{ opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "back.out(1.2)" }}, 0.8);
-  tl.fromTo("#scene-03-card-3", {{ opacity: 0, y: 40, scale: 0.95 }}, {{ opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "back.out(1.2)" }}, 1.1);
-  tl.fromTo("#scene-03-card-4", {{ opacity: 0, y: 40, scale: 0.95 }}, {{ opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "back.out(1.2)" }}, 1.4);
-  tl.to("#scene-03-card-1", {{ borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.35)", duration: 0.5 }}, 0.5)
-    .to("#scene-03-card-1", {{ borderColor: "rgba(245, 158, 11, 0.3)", boxShadow: "0 15px 40px rgba(0,0,0,0.7), 0 0 25px rgba(245, 158, 11, 0.1)", duration: 0.5 }}, 5.5)
-    .to("#scene-03-card-2", {{ borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.35)", duration: 0.5 }}, 5.5)
-    .to("#scene-03-card-2", {{ borderColor: "rgba(245, 158, 11, 0.3)", boxShadow: "0 15px 40px rgba(0,0,0,0.7), 0 0 25px rgba(245, 158, 11, 0.1)", duration: 0.5 }}, 10.8)
-    .to("#scene-03-card-3", {{ borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.35)", duration: 0.5 }}, 10.8)
-    .to("#scene-03-card-3", {{ borderColor: "rgba(245, 158, 11, 0.3)", boxShadow: "0 15px 40px rgba(0,0,0,0.7), 0 0 25px rgba(245, 158, 11, 0.1)", duration: 0.5 }}, 15.2)
-    .to("#scene-03-card-4", {{ borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.35)", duration: 0.5 }}, 15.2);
+  // Background Pan
+  tl.fromTo("#scene-03-bg", {{ scale: 1.0, y: 0 }}, {{ scale: 1.08, y: -25, duration: 31.0, ease: "none" }}, 0);
+
+  // Layout In
+  tl.fromTo(".timeline-rail", {{ opacity: 0, y: -15 }}, {{ opacity: 1, y: 0, duration: 0.6 }}, 0.2);
+  tl.fromTo(".title-area", {{ opacity: 0, y: -20 }}, {{ opacity: 1, y: 0, duration: 0.8 }}, 0.4);
+
+  // Cards Sequence
+  tl.fromTo("#lord-card-1", {{ opacity: 0, y: 40 }}, {{ opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }}, 0.8);
+  tl.fromTo("#lord-card-2", {{ opacity: 0, y: 40 }}, {{ opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }}, 1.2);
+  tl.fromTo("#lord-card-3", {{ opacity: 0, y: 40 }}, {{ opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }}, 1.6);
+  tl.fromTo("#lord-card-4", {{ opacity: 0, y: 40 }}, {{ opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }}, 2.0);
+
+  // Highlighting active lord according to voiceover
+  tl.to("#lord-card-1", {{ borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 0 35px rgba(245, 158, 11, 0.4)", duration: 0.4 }}, 5.5)
+    .to("#lord-card-1", {{ borderColor: "rgba(255, 255, 255, 0.12)", boxShadow: "0 15px 35px rgba(0,0,0,0.7)", duration: 0.4 }}, 12.5);
+
+  tl.to("#lord-card-2", {{ borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 0 35px rgba(245, 158, 11, 0.4)", duration: 0.4 }}, 12.5)
+    .to("#lord-card-2", {{ borderColor: "rgba(255, 255, 255, 0.12)", boxShadow: "0 15px 35px rgba(0,0,0,0.7)", duration: 0.4 }}, 19.0);
+
+  tl.to("#lord-card-3", {{ borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 0 35px rgba(245, 158, 11, 0.4)", duration: 0.4 }}, 19.0)
+    .to("#lord-card-3", {{ borderColor: "rgba(255, 255, 255, 0.12)", boxShadow: "0 15px 35px rgba(0,0,0,0.7)", duration: 0.4 }}, 25.0);
+
+  tl.to("#lord-card-4", {{ borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 0 35px rgba(245, 158, 11, 0.4)", duration: 0.4 }}, 25.0);
 
   // Captions
-  tl.set("#c-03-1", {{ opacity: 1 }}, 0.50).set("#c-03-1", {{ opacity: 0 }}, 5.50);
-  tl.set("#c-03-2", {{ opacity: 1 }}, 5.50).set("#c-03-2", {{ opacity: 0 }}, 10.80);
-  tl.set("#c-03-3", {{ opacity: 1 }}, 10.80).set("#c-03-3", {{ opacity: 0 }}, 15.20);
-  tl.set("#c-03-4", {{ opacity: 1 }}, 15.20).set("#c-03-4", {{ opacity: 0 }}, 20.90);
-
-  // Progress Bar
-  tl.fromTo("#p-03", {{ scaleX: 0 }}, {{ scaleX: 1, duration: {dur}, ease: "none" }}, 0);
+  tl.set("#c-03-1", {{ opacity: 1 }}, 0.50).set("#c-03-1", {{ opacity: 0 }}, 5.30);
+  tl.set("#c-03-2", {{ opacity: 1 }}, 5.50).set("#c-03-2", {{ opacity: 0 }}, 12.30);
+  tl.set("#c-03-3", {{ opacity: 1 }}, 12.50).set("#c-03-3", {{ opacity: 0 }}, 18.80);
+  tl.set("#c-03-4", {{ opacity: 1 }}, 19.00).set("#c-03-4", {{ opacity: 0 }}, 24.80);
+  tl.set("#c-03-5", {{ opacity: 1 }}, 25.00).set("#c-03-5", {{ opacity: 0 }}, 30.20);
 
   window.__timelines["scene-03"] = tl;
 }}
 </script>
 </template>
 </body>
-</html>"""
+</html>
+"""
+    (OUT_DIR / 'scene-03.html').write_text(html)
 
-def generate_scene_04(dur):
-    return f"""<!doctype html>
+def generate_scene_04():
+    # Dur: 29.5s
+    # Audio: 27.70s (start 0.5s)
+    # Nano art: scene04_ritual.jpg
+    html = f"""<!doctype html>
 <html lang="zh-CN">
 <head><meta charset="UTF-8"></head>
 <body>
 <template>
 <style>
-{DS3_COMMON_CSS}
+{COMMON_CSS}
 </style>
-<div id="root" data-composition-id="scene-04" data-width="1920" data-height="1080">
+<div id="root" data-composition-id="scene-04" data-width="1920" data-height="1080" style="width:1920px;height:1080px;position:relative;overflow:hidden;">
   <div class="bg-wrap" data-layout-allow-overflow>
-    <img id="scene-04-bg" class="bg-img" src="assets/images/scene04_ritual.jpg" alt="Ritual of Cinders" data-layout-allow-overflow data-start="0" data-duration="{dur}">
+    <img id="scene-04-bg" class="bg-img" src="assets/images/scene01_awakening.jpg" data-layout-allow-overflow data-duration="29.5" />
     <div class="bg-overlay"></div>
     <div class="ember-glow"></div>
   </div>
 
-  <div class="header">
-    <div class="badge-chapter">🔥 CHAPTER III · 薪柴归座</div>
-    <div class="topic-tag">DARK SOULS III · 猎王誓约与火炉启封</div>
+  <div class="timeline-rail">
+    <div class="timeline-steps">
+      <div class="timeline-node">01 葛温源头</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">02 薪王罢工</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">03 叛逃真相</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node active">04 余灰催债</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">05 终局决战</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">06 灭火破晓</div>
+    </div>
+    <div class="topic-tag">执行机制 · 终极保底清道夫</div>
   </div>
 
   <div class="title-area">
-    <h1 class="main-title">猎王之誓 · 柴薪共鸣</h1>
-    <div class="sub-title">无火余灰踏平诸神，四大薪王柴薪归位，点燃通往最初火炉的通天烈焰</div>
+    <h1 class="main-title">保底机制 · 叫醒灰烬强制催债</h1>
+    <div class="sub-tagline">
+      <span class="tagline-badge">物理执法</span>
+      <span>薪王不肯自己走回王座？那就踏遍世界，把他们的柴薪全部按回原位！</span>
+    </div>
   </div>
 
-  <div class="cards-grid">
-    <div id="scene-04-card-1" class="card-item">
-      <div>
-        <div class="card-top">
-          <div class="card-icon-title">
-            <span class="card-icon">⚔️</span>
-            <span class="card-heading">灰烬的猎王征途</span>
-          </div>
-          <span class="card-badge">凡躯弑神</span>
+  <div class="content-split">
+    <!-- Left Logic Flow -->
+    <div class="logic-column">
+      <div id="node-04-1" class="logic-box">
+        <div class="box-header">
+          <span class="box-pill gold">应急机制 · 唤醒灰烬</span>
+          <span class="box-title">谁是余灰？连当柴资格都没有的淘汰者</span>
         </div>
-        <div class="card-quote">“虽为卑微余灰，却斩下了王者的头颅。”</div>
-        <div class="card-details">
-          <div class="detail-row"><span class="detail-bullet"></span><span>踏遍冷冽谷、地下监牢、罪业之都与洛斯里克</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>以凡人之躯接连斩杀传奇薪王与古老神明</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>将四位薪王的柴薪遗蜕强行带回传火祭祀场</span></div>
+        <div class="box-bullets">
+          <div class="bullet-item"><div class="bullet-dot"></div><span>曾经尝试传火但神魂不够强大、直接烧成<b>残渣飞灰的失败者</b>。</span></div>
+          <div class="bullet-item"><div class="bullet-dot"></div><span>无欲无求，拥有<b>无限次死而复生</b>的绝对本能！</span></div>
         </div>
       </div>
-      <div class="card-footer">
-        <span>征伐印记</span>
-        <span class="footer-highlight">余火的觉醒</span>
+
+      <div id="node-04-2" class="logic-box danger">
+        <div class="box-header">
+          <span class="box-pill red">催债使命 · 物理斩杀</span>
+          <span class="box-title">强行执行：不回王座就斩首拖回</span>
+        </div>
+        <div class="box-bullets">
+          <div class="bullet-item alert"><div class="bullet-dot"></div><span>踏平洛斯里克高墙、深入法兰沼泽、荡平冷冽谷与罪业之都！</span></div>
+          <div class="bullet-item"><div class="bullet-dot"></div><span><b>将叛逃薪王逐一斩杀</b>，割下柴薪与头颅带回祭祀场！</span></div>
+        </div>
+      </div>
+
+      <div id="node-04-3" class="logic-box highlight">
+        <div class="box-header">
+          <span class="box-pill blue">柴薪共鸣 · 通道开启</span>
+          <span class="box-title">四王归位：轰然打开最初火炉之门</span>
+        </div>
+        <div class="box-bullets">
+          <div class="bullet-item"><div class="bullet-dot"></div><span>当四大柴薪在王座上重燃，古老的传火能量彻底汇聚。</span></div>
+          <div class="bullet-item"><div class="bullet-dot"></div><span>营火共鸣，打通通往世界尽头<b>最初火炉</b>的传送大门！</span></div>
+        </div>
       </div>
     </div>
 
-    <div id="scene-04-card-2" class="card-item">
-      <div>
-        <div class="card-top">
-          <div class="card-icon-title">
-            <span class="card-icon">🔥</span>
-            <span class="card-heading">王座共鸣仪式</span>
-          </div>
-          <span class="card-badge">柴薪聚首</span>
+    <!-- Right Art Card (Ritual) -->
+    <div id="art-04" class="art-column">
+      <div class="art-img-wrap" data-layout-allow-overflow>
+        <img id="ritual-img" class="art-img" src="assets/images/scene04_ritual.jpg" data-layout-allow-overflow data-duration="29.5" />
+        <div class="art-gradient-overlay"></div>
+        <div class="art-info-overlay">
+          <div class="art-badge">终极执行官 / 无火余灰</div>
+          <h2 class="art-name">灰烬归位仪式</h2>
+          <p class="art-desc">
+            "若王者不归，余灰便跨越千难万险，将他们的遗骸按上冰冷的石座！"
+          </p>
         </div>
-        <div class="card-quote">“当柴薪齐聚，王座将化作通往世界尽头的桥梁。”</div>
-        <div class="card-details">
-          <div class="detail-row"><span class="detail-bullet"></span><span>四王柴薪安放于空悬王座，鲁道斯自燃为引</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>五道冲天金焰与古老符文在大理石地面交织</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>千万代积攒的余火之力汇聚于余灰一身体内</span></div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span>仪轨圆满</span>
-        <span class="footer-highlight">烈火燃透圣所</span>
-      </div>
-    </div>
-
-    <div id="scene-04-card-3" class="card-item">
-      <div>
-        <div class="card-top">
-          <div class="card-icon-title">
-            <span class="card-icon">🌀</span>
-            <span class="card-heading">最初火炉之门</span>
-          </div>
-          <span class="card-badge">时空尽头</span>
-        </div>
-        <div class="card-quote">“时空倾覆碎裂，通往世界一切宿命的终局。”</div>
-        <div class="card-details">
-          <div class="detail-row"><span class="detail-bullet"></span><span>传火祭祀场营火爆发出穿梭时空的引力</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>余灰被传送至坍塌倾斜的“初始火炉”</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>世界的尽头，一切历史与王国在这里挤压成废墟</span></div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span>彼岸归宿</span>
-        <span class="footer-highlight">叩响终局之门</span>
       </div>
     </div>
   </div>
 
+  <!-- Captions -->
   <div class="caption-container">
-    <div id="c-04-1" class="caption-box" style="opacity: 0;">余灰虽被世人鄙夷为无火无光之物，却唯有他们踏上猎王之路。</div>
-    <div id="c-04-2" class="caption-box" style="opacity: 0;">斩杀薪王，集齐四大柴薪，置于祭祀场的王座之上。</div>
-    <div id="c-04-3" class="caption-box" style="opacity: 0;">当余火再度激荡，通往最初火炉的道路轰然开启。</div>
+    <div id="c-04-1" class="caption-box" style="opacity: 0;">薪王全跑路怎么办？传火体制启动终极应急预案：唤醒无火余灰！</div>
+    <div id="c-04-2" class="caption-box" style="opacity: 0;">余灰是当年连当柴资格都没有、直接烧成飞灰的淘汰者！</div>
+    <div id="c-04-3" class="caption-box" style="opacity: 0;">余灰目标极其纯粹：薪王不肯主动返工，那就全部砍翻按回王座！</div>
+    <div id="c-04-4" class="caption-box" style="opacity: 0;">当四大柴薪在祭祀场集齐共鸣，通往最初火炉的道路轰然开启！</div>
   </div>
-
-  <div class="progress-track"><div id="p-04" class="progress-bar"></div></div>
 </div>
 <script>
 {{
   const tl = gsap.timeline({{ paused: true }});
   
-  // Background Ken Burns
-  tl.fromTo("#scene-04-bg", {{ scale: 1.0, y: 0 }}, {{ scale: 1.08, y: -20, duration: {dur}, ease: "none" }}, 0);
-  
-  // Headers
-  tl.fromTo(".header", {{ opacity: 0, y: -20 }}, {{ opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }}, 0.2);
-  tl.fromTo(".title-area", {{ opacity: 0, y: -25 }}, {{ opacity: 1, y: 0, duration: 1.0, ease: "power2.out" }}, 0.4);
-  
-  // Cards Stagger In
-  tl.fromTo("#scene-04-card-1", {{ opacity: 0, y: 40, scale: 0.96 }}, {{ opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.2)" }}, 0.8);
-  tl.fromTo("#scene-04-card-2", {{ opacity: 0, y: 40, scale: 0.96 }}, {{ opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.2)" }}, 1.2);
-  tl.fromTo("#scene-04-card-3", {{ opacity: 0, y: 40, scale: 0.96 }}, {{ opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.2)" }}, 1.6);
-  tl.to("#scene-04-card-1", {{ borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.35)", duration: 0.5 }}, 0.8)
-    .to("#scene-04-card-1", {{ borderColor: "rgba(245, 158, 11, 0.3)", boxShadow: "0 15px 40px rgba(0,0,0,0.7), 0 0 25px rgba(245, 158, 11, 0.1)", duration: 0.5 }}, 5.2)
-    .to("#scene-04-card-2", {{ borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.35)", duration: 0.5 }}, 5.2)
-    .to("#scene-04-card-2", {{ borderColor: "rgba(245, 158, 11, 0.3)", boxShadow: "0 15px 40px rgba(0,0,0,0.7), 0 0 25px rgba(245, 158, 11, 0.1)", duration: 0.5 }}, 10.6)
-    .to("#scene-04-card-3", {{ borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.35)", duration: 0.5 }}, 10.6);
+  // Background Pan
+  tl.fromTo("#scene-04-bg", {{ scale: 1.0, y: 0 }}, {{ scale: 1.08, y: -25, duration: 29.5, ease: "none" }}, 0);
+  tl.fromTo("#ritual-img", {{ scale: 1.05 }}, {{ scale: 1.15, duration: 29.5, ease: "none" }}, 0);
+
+  // Layout In
+  tl.fromTo(".timeline-rail", {{ opacity: 0, y: -15 }}, {{ opacity: 1, y: 0, duration: 0.6 }}, 0.2);
+  tl.fromTo(".title-area", {{ opacity: 0, y: -20 }}, {{ opacity: 1, y: 0, duration: 0.8 }}, 0.4);
+  tl.fromTo("#art-04", {{ opacity: 0, x: 40 }}, {{ opacity: 1, x: 0, duration: 0.9, ease: "power2.out" }}, 0.6);
+
+  // Nodes Sequence
+  tl.fromTo("#node-04-1", {{ opacity: 0, y: 25 }}, {{ opacity: 1, y: 0, duration: 0.6 }}, 0.8);
+  tl.fromTo("#node-04-2", {{ opacity: 0, y: 25 }}, {{ opacity: 1, y: 0, duration: 0.6 }}, 12.5);
+  tl.fromTo("#node-04-3", {{ opacity: 0, y: 25 }}, {{ opacity: 1, y: 0, duration: 0.6 }}, 20.5);
 
   // Captions
-  tl.set("#c-04-1", {{ opacity: 1 }}, 0.50).set("#c-04-1", {{ opacity: 0 }}, 5.20);
-  tl.set("#c-04-2", {{ opacity: 1 }}, 5.20).set("#c-04-2", {{ opacity: 0 }}, 10.60);
-  tl.set("#c-04-3", {{ opacity: 1 }}, 10.60).set("#c-04-3", {{ opacity: 0 }}, 16.80);
-
-  // Progress Bar
-  tl.fromTo("#p-04", {{ scaleX: 0 }}, {{ scaleX: 1, duration: {dur}, ease: "none" }}, 0);
+  tl.set("#c-04-1", {{ opacity: 1 }}, 0.50).set("#c-04-1", {{ opacity: 0 }}, 5.80);
+  tl.set("#c-04-2", {{ opacity: 1 }}, 6.00).set("#c-04-2", {{ opacity: 0 }}, 12.20);
+  tl.set("#c-04-3", {{ opacity: 1 }}, 12.50).set("#c-04-3", {{ opacity: 0 }}, 20.20);
+  tl.set("#c-04-4", {{ opacity: 1 }}, 20.50).set("#c-04-4", {{ opacity: 0 }}, 28.50);
 
   window.__timelines["scene-04"] = tl;
 }}
 </script>
 </template>
 </body>
-</html>"""
+</html>
+"""
+    (OUT_DIR / 'scene-04.html').write_text(html)
 
-def generate_scene_05(dur):
-    return f"""<!doctype html>
+def generate_scene_05():
+    # Dur: 28.0s
+    # Audio: 26.02s (start 0.5s)
+    # Nano art: scene05_kiln.jpg
+    html = f"""<!doctype html>
 <html lang="zh-CN">
 <head><meta charset="UTF-8"></head>
 <body>
 <template>
 <style>
-{DS3_COMMON_CSS}
+{COMMON_CSS}
 </style>
-<div id="root" data-composition-id="scene-05" data-width="1920" data-height="1080">
+<div id="root" data-composition-id="scene-05" data-width="1920" data-height="1080" style="width:1920px;height:1080px;position:relative;overflow:hidden;">
   <div class="bg-wrap" data-layout-allow-overflow>
-    <img id="scene-05-bg" class="bg-img" src="assets/images/scene05_kiln.jpg" alt="Soul of Cinder" data-layout-allow-overflow data-start="0" data-duration="{dur}">
+    <img id="scene-05-bg" class="bg-img" src="assets/images/scene02_firelink.jpg" data-layout-allow-overflow data-duration="28.0" />
     <div class="bg-overlay"></div>
     <div class="ember-glow"></div>
   </div>
 
-  <div class="header">
-    <div class="badge-chapter">🔥 CHAPTER IV · 最初火炉</div>
-    <div class="topic-tag">DARK SOULS III · 宿命的最终守门人</div>
+  <div class="timeline-rail">
+    <div class="timeline-steps">
+      <div class="timeline-node">01 葛温源头</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">02 薪王罢工</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">03 叛逃真相</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">04 余灰催债</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node active">05 终局决战</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">06 灭火破晓</div>
+    </div>
+    <div class="topic-tag">决战舞台 · 千万年执念具象</div>
   </div>
 
   <div class="title-area">
-    <h1 class="main-title">终局之战 · 薪王化身</h1>
-    <div class="sub-title">暗日流血的世界尽头，万千前代传火者灵魂的聚合体与悲壮对决</div>
+    <h1 class="main-title">终极决战 · 薪王化身与流血暗日</h1>
+    <div class="sub-tagline">
+      <span class="tagline-badge">宿命之战</span>
+      <span>击败他，不是为了延续神话，而是亲手斩断千万年强加于世的枷锁！</span>
+    </div>
   </div>
 
-  <div class="cards-grid">
-    <div id="scene-05-card-1" class="card-item">
-      <div>
-        <div class="card-top">
-          <div class="card-icon-title">
-            <span class="card-icon">🌑</span>
-            <span class="card-heading">滴血的黑暗之环</span>
-          </div>
-          <span class="card-badge">灭世异象</span>
+  <div class="content-split">
+    <!-- Left Logic Flow -->
+    <div class="logic-column">
+      <div id="node-05-1" class="logic-box danger">
+        <div class="box-header">
+          <span class="box-pill red">末日异象 · 时空坍缩</span>
+          <span class="box-title">初始火炉：流血的黑暗之环日蚀</span>
         </div>
-        <div class="card-quote">“太阳化作淌血的黑洞，初火再难维系。”</div>
-        <div class="card-details">
-          <div class="detail-row"><span class="detail-bullet"></span><span>天空中挂着渗出暗红淤血的黑暗之环（Darksign）</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>历代王朝建筑如同破碎的浪潮扭曲堆叠</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>这不仅是火炉，更是整部传火史的苍凉墓冢</span></div>
+        <div class="box-bullets">
+          <div class="bullet-item"><div class="bullet-dot"></div><span>世间时空彻底错乱聚拢，历代王朝废墟在此崩塌凝固。</span></div>
+          <div class="bullet-item"><div class="bullet-dot"></div><span>苍穹悬挂着淌血的<b>黑暗之环日蚀</b>，整部传火史的苍凉在此定格！</span></div>
         </div>
       </div>
-      <div class="card-footer">
-        <span>世界尽头</span>
-        <span class="footer-highlight">倾颓的天空</span>
+
+      <div id="node-05-2" class="logic-box">
+        <div class="box-header">
+          <span class="box-pill gold">终极守门 · 历代化身</span>
+          <span class="box-title">薪王化身：千千万万传火者的聚合体</span>
+        </div>
+        <div class="box-bullets">
+          <div class="bullet-item"><div class="bullet-dot"></div><span>初代葛温与千万代传火英雄的<b>残存执念凝为一体</b>。</span></div>
+          <div class="bullet-item"><div class="bullet-dot"></div><span>他会使用历代玩家与英雄的所有武器技艺，守卫最后残焰！</span></div>
+        </div>
+      </div>
+
+      <div id="node-05-3" class="logic-box highlight">
+        <div class="box-header">
+          <span class="box-pill blue">灵魂悲歌 · 葛温复苏</span>
+          <span class="box-title">钢琴三连音：始作俑者的宿命悲叹</span>
+        </div>
+        <div class="box-bullets">
+          <div class="bullet-item"><div class="bullet-dot"></div><span>二阶段<b>哀伤的钢琴三连音（Plin Plin Plon）</b>轰然响起。</span></div>
+          <div class="bullet-item alert"><div class="bullet-dot"></div><span>击败他，正是<b>彻底终结葛温万年前亲手犯下的原罪</b>！</span></div>
+        </div>
       </div>
     </div>
 
-    <div id="scene-05-card-2" class="card-item">
-      <div>
-        <div class="card-top">
-          <div class="card-icon-title">
-            <span class="card-icon">⚔️</span>
-            <span class="card-heading">薪王们的化身</span>
-          </div>
-          <span class="card-badge">千万灵魂</span>
+    <!-- Right Art Card (Kiln / Soul of Cinder) -->
+    <div id="art-05" class="art-column">
+      <div class="art-img-wrap" data-layout-allow-overflow>
+        <img id="kiln-img" class="art-img" src="assets/images/scene05_kiln.jpg" data-layout-allow-overflow data-duration="28.0" />
+        <div class="art-gradient-overlay"></div>
+        <div class="art-info-overlay">
+          <div class="art-badge">最终守门人 / 执念集合体</div>
+          <h2 class="art-name">薪王们的化身</h2>
+          <p class="art-desc">
+            "他是千万代英雄壮烈献身的丰碑，也是神权万年谎言最悲凉的守墓人！"
+          </p>
         </div>
-        <div class="card-quote">“它是你，是他，是一切曾为初火献身的英雄。”</div>
-        <div class="card-details">
-          <div class="detail-row"><span class="detail-bullet"></span><span>初代薪王葛温与无数玩家、历代传火者的聚合体</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>手握螺旋剑，随意切换法术、奇迹、弯刀与长枪</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>它是传火意志的最后具象，守卫着残火的尊严</span></div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span>终极考验</span>
-        <span class="footer-highlight">战胜过去的自己</span>
-      </div>
-    </div>
-
-    <div id="scene-05-card-3" class="card-item">
-      <div>
-        <div class="card-top">
-          <div class="card-icon-title">
-            <span class="card-icon">🎹</span>
-            <span class="card-heading">葛温的钢琴三连音</span>
-          </div>
-          <span class="card-badge">传世哀歌</span>
-        </div>
-        <div class="card-quote">“当熟悉的旋律响起，一代史诗在此落幕。”</div>
-        <div class="card-details">
-          <div class="detail-row"><span class="detail-bullet"></span><span>进入二阶段，化身燃起金色雷电与阳光奇迹</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>背景音乐突变，一代葛温钢琴主题悠然响起</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>那并非胜利的狂想，而是一曲跨越千年的安魂绝唱</span></div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span>落幕之音</span>
-        <span class="footer-highlight">三连音的叹息</span>
       </div>
     </div>
   </div>
 
+  <!-- Captions -->
   <div class="caption-container">
-    <div id="c-05-1" class="caption-box" style="opacity: 0;">在世界的尽头，天空悬挂着流淌着暗色余晖的暗黑之环。</div>
-    <div id="c-05-2" class="caption-box" style="opacity: 0;">最后的守门人——薪王们的化身，是千百年来所有传火者灵魂的聚合体。</div>
-    <div id="c-05-3" class="caption-box" style="opacity: 0;">当凄凉的钢琴三连音响起，无数宿命的悲壮在此刻交织碰撞。</div>
+    <div id="c-05-1" class="caption-box" style="opacity: 0;">来到世界尽头的初始火炉，天上挂着流血的黑暗之环日蚀！</div>
+    <div id="c-05-2" class="caption-box" style="opacity: 0;">最后守门人薪王化身，是初代葛温与千万代英雄执念的集合体！</div>
+    <div id="c-05-3" class="caption-box" style="opacity: 0;">击败化身，就是战胜过去千万年来强加于世界的传火枷锁！</div>
+    <div id="c-05-4" class="caption-box" style="opacity: 0;">当二阶段哀伤的钢琴三连音响起，无数宿命的悲壮在此彻底引爆！</div>
   </div>
-
-  <div class="progress-track"><div id="p-05" class="progress-bar"></div></div>
 </div>
 <script>
 {{
   const tl = gsap.timeline({{ paused: true }});
   
-  // Background Ken Burns
-  tl.fromTo("#scene-05-bg", {{ scale: 1.0, y: 0 }}, {{ scale: 1.08, y: -20, duration: {dur}, ease: "none" }}, 0);
-  
-  // Headers
-  tl.fromTo(".header", {{ opacity: 0, y: -20 }}, {{ opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }}, 0.2);
-  tl.fromTo(".title-area", {{ opacity: 0, y: -25 }}, {{ opacity: 1, y: 0, duration: 1.0, ease: "power2.out" }}, 0.4);
-  
-  // Cards Stagger In
-  tl.fromTo("#scene-05-card-1", {{ opacity: 0, y: 40, scale: 0.96 }}, {{ opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.2)" }}, 0.8);
-  tl.fromTo("#scene-05-card-2", {{ opacity: 0, y: 40, scale: 0.96 }}, {{ opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.2)" }}, 1.2);
-  tl.fromTo("#scene-05-card-3", {{ opacity: 0, y: 40, scale: 0.96 }}, {{ opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.2)" }}, 1.6);
-  tl.to("#scene-05-card-1", {{ borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.35)", duration: 0.5 }}, 0.8)
-    .to("#scene-05-card-1", {{ borderColor: "rgba(245, 158, 11, 0.3)", boxShadow: "0 15px 40px rgba(0,0,0,0.7), 0 0 25px rgba(245, 158, 11, 0.1)", duration: 0.5 }}, 5.5)
-    .to("#scene-05-card-2", {{ borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.35)", duration: 0.5 }}, 5.5)
-    .to("#scene-05-card-2", {{ borderColor: "rgba(245, 158, 11, 0.3)", boxShadow: "0 15px 40px rgba(0,0,0,0.7), 0 0 25px rgba(245, 158, 11, 0.1)", duration: 0.5 }}, 11.2)
-    .to("#scene-05-card-3", {{ borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.35)", duration: 0.5 }}, 11.2);
+  // Background Pan
+  tl.fromTo("#scene-05-bg", {{ scale: 1.0, y: 0 }}, {{ scale: 1.08, y: -25, duration: 28.0, ease: "none" }}, 0);
+  tl.fromTo("#kiln-img", {{ scale: 1.05 }}, {{ scale: 1.15, duration: 28.0, ease: "none" }}, 0);
+
+  // Layout In
+  tl.fromTo(".timeline-rail", {{ opacity: 0, y: -15 }}, {{ opacity: 1, y: 0, duration: 0.6 }}, 0.2);
+  tl.fromTo(".title-area", {{ opacity: 0, y: -20 }}, {{ opacity: 1, y: 0, duration: 0.8 }}, 0.4);
+  tl.fromTo("#art-05", {{ opacity: 0, x: 40 }}, {{ opacity: 1, x: 0, duration: 0.9, ease: "power2.out" }}, 0.6);
+
+  // Nodes Sequence
+  tl.fromTo("#node-05-1", {{ opacity: 0, y: 25 }}, {{ opacity: 1, y: 0, duration: 0.6 }}, 0.8);
+  tl.fromTo("#node-05-2", {{ opacity: 0, y: 25 }}, {{ opacity: 1, y: 0, duration: 0.6 }}, 6.5);
+  tl.fromTo("#node-05-3", {{ opacity: 0, y: 25 }}, {{ opacity: 1, y: 0, duration: 0.6 }}, 13.5);
 
   // Captions
-  tl.set("#c-05-1", {{ opacity: 1 }}, 0.50).set("#c-05-1", {{ opacity: 0 }}, 5.50);
-  tl.set("#c-05-2", {{ opacity: 1 }}, 5.50).set("#c-05-2", {{ opacity: 0 }}, 11.20);
-  tl.set("#c-05-3", {{ opacity: 1 }}, 11.20).set("#c-05-3", {{ opacity: 0 }}, 19.00);
-
-  // Progress Bar
-  tl.fromTo("#p-05", {{ scaleX: 0 }}, {{ scaleX: 1, duration: {dur}, ease: "none" }}, 0);
+  tl.set("#c-05-1", {{ opacity: 1 }}, 0.50).set("#c-05-1", {{ opacity: 0 }}, 6.30);
+  tl.set("#c-05-2", {{ opacity: 1 }}, 6.50).set("#c-05-2", {{ opacity: 0 }}, 13.20);
+  tl.set("#c-05-3", {{ opacity: 1 }}, 13.50).set("#c-05-3", {{ opacity: 0 }}, 19.50);
+  tl.set("#c-05-4", {{ opacity: 1 }}, 19.80).set("#c-05-4", {{ opacity: 0 }}, 27.00);
 
   window.__timelines["scene-05"] = tl;
 }}
 </script>
 </template>
 </body>
-</html>"""
+</html>
+"""
+    (OUT_DIR / 'scene-05.html').write_text(html)
 
-def generate_scene_06(dur):
-    return f"""<!doctype html>
+def generate_scene_06():
+    # Dur: 30.5s
+    # Audio: 28.06s (start 0.5s)
+    # Nano art: scene06_firekeeper.jpg
+    html = f"""<!doctype html>
 <html lang="zh-CN">
 <head><meta charset="UTF-8"></head>
 <body>
 <template>
 <style>
-{DS3_COMMON_CSS}
-  .card-item-serene {{
-    background: linear-gradient(160deg, rgba(16, 20, 30, 0.85) 0%, rgba(5, 7, 12, 0.95) 100%);
-    border: 1.5px solid rgba(125, 211, 252, 0.3);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.8), 0 0 25px rgba(125, 211, 252, 0.1);
-  }}
-  .card-item-serene::before {{
-    background: linear-gradient(90deg, transparent, #7dd3fc, transparent);
-  }}
-  .badge-serene {{
-    background: rgba(125, 211, 252, 0.15) !important;
-    border: 1px solid rgba(125, 211, 252, 0.4) !important;
-    color: #7dd3fc !important;
-  }}
-  .quote-serene {{
-    color: #bae6fd !important;
-    border-left-color: #38bdf8 !important;
-  }}
-  .bullet-serene {{
-    background: #38bdf8 !important;
-    box-shadow: 0 0 8px #38bdf8 !important;
-  }}
+{COMMON_CSS}
 </style>
-<div id="root" data-composition-id="scene-06" data-width="1920" data-height="1080">
+<div id="root" data-composition-id="scene-06" data-width="1920" data-height="1080" style="width:1920px;height:1080px;position:relative;overflow:hidden;">
   <div class="bg-wrap" data-layout-allow-overflow>
-    <img id="scene-06-bg" class="bg-img" src="assets/images/scene06_firekeeper.jpg" alt="The End of Fire" data-layout-allow-overflow data-start="0" data-duration="{dur}">
+    <img id="scene-06-bg" class="bg-img" src="assets/images/scene01_awakening.jpg" data-layout-allow-overflow data-duration="30.5" />
     <div class="bg-overlay"></div>
     <div class="ember-glow"></div>
   </div>
 
-  <div class="header">
-    <div class="badge-chapter" style="background: rgba(125, 211, 252, 0.15); border-color: rgba(125, 211, 252, 0.45); color: #bae6fd;">✨ EPILOGUE · 传火终局</div>
-    <div class="topic-tag">DARK SOULS III · 熄火与破晓的余愿</div>
+  <div class="timeline-rail">
+    <div class="timeline-steps">
+      <div class="timeline-node">01 葛温源头</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">02 薪王罢工</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">03 叛逃真相</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">04 余灰催债</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">05 终局决战</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node active">06 灭火破晓</div>
+    </div>
+    <div class="topic-tag">终局抉择 · 挣脱枷锁破晓新生</div>
   </div>
 
   <div class="title-area">
-    <h1 class="main-title" style="background: linear-gradient(135deg, #ffffff 20%, #bae6fd 60%, #38bdf8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">火的归宿 · 熄灭初火</h1>
-    <div class="sub-title">当微弱的余烬在掌心熄灭，世界终归于宁静深邃的安眠与微小的未来</div>
+    <h1 class="main-title">终局抉择 · 熄灭初火与破晓新生</h1>
+    <div class="sub-tagline">
+      <span class="tagline-badge">破局新生</span>
+      <span>放下对初火的盲目执念，让病态的万年诅咒归于宁静的长夜！</span>
+    </div>
   </div>
 
-  <div class="cards-grid">
-    <div id="scene-06-card-1" class="card-item card-item-serene">
-      <div>
-        <div class="card-top">
-          <div class="card-icon-title">
-            <span class="card-icon">🕯️</span>
-            <span class="card-heading">初火终归熄灭</span>
-          </div>
-          <span class="card-badge badge-serene">打破轮回</span>
+  <div class="content-split">
+    <!-- Left Logic Flow -->
+    <div class="logic-column">
+      <div id="node-06-1" class="logic-box danger">
+        <div class="box-header">
+          <span class="box-pill red">虚妄结局 · 强行传火</span>
+          <span class="box-title">油尽灯枯：毫无意义的苟延残喘</span>
         </div>
-        <div class="card-quote quote-serene">“传火不是永恒的救赎，而是一场逆天命的延期。”</div>
-        <div class="card-details">
-          <div class="detail-row"><span class="detail-bullet bullet-serene"></span><span>四代结局中最为诗意深邃的抉择：灭火（End of Fire）</span></div>
-          <div class="detail-row"><span class="detail-bullet bullet-serene"></span><span>盲眼防火女双手承接初火，任由火光渐次黯淡</span></div>
-          <div class="detail-row"><span class="detail-bullet bullet-serene"></span><span>强行延续千百年的传火诅咒，在此刻终于宣告结束</span></div>
+        <div class="box-bullets">
+          <div class="bullet-item"><div class="bullet-dot"></div><span>初火早已被榨干，哪怕你全身坐上去，也只能冒出几颗凄凉火星。</span></div>
+          <div class="bullet-item"><div class="bullet-dot"></div><span>盲目传火只会让世界在扭曲畸变中继续受罪，<b>毫无解脱可言</b>！</span></div>
         </div>
       </div>
-      <div class="card-footer">
-        <span>宿命解脱</span>
-        <span class="footer-highlight" style="color: #38bdf8;">火之时代的终焉</span>
+
+      <div id="node-06-2" class="logic-box highlight">
+        <div class="box-header">
+          <span class="box-pill gold">真正解脱 · 托付初火</span>
+          <span class="box-title">灭火结局：召唤防火女捧起微光</span>
+        </div>
+        <div class="box-bullets">
+          <div class="bullet-item"><div class="bullet-dot"></div><span>将残存的初火交予<b>防火女</b>双手中，让初火自然熄灭。</span></div>
+          <div class="bullet-item"><div class="bullet-dot"></div><span>烧了几万年的病态诅咒彻底斩断，天地归于<b>深邃宁静的黑夜</b>。</span></div>
+        </div>
+      </div>
+
+      <div id="node-06-3" class="logic-box">
+        <div class="box-header">
+          <span class="box-pill blue">未来希望 · 静待破晓</span>
+          <span class="box-title">黑夜之后：清澈的新火必将复生</span>
+        </div>
+        <div class="box-bullets">
+          <div class="bullet-item"><div class="bullet-dot"></div><span>黑暗并不代表灭亡，而是万物休养生息的自然节律。</span></div>
+          <div class="bullet-item alert"><div class="bullet-dot"></div><span>正如防火女最后的轻语：<b>在漫长黑暗尽头，微小的火苗必将重新诞生！</b></span></div>
+        </div>
       </div>
     </div>
 
-    <div id="scene-06-card-2" class="card-item card-item-serene">
-      <div>
-        <div class="card-top">
-          <div class="card-icon-title">
-            <span class="card-icon">🌌</span>
-            <span class="card-heading">宁谧深邃的黑暗</span>
-          </div>
-          <span class="card-badge badge-serene">世界本真</span>
+    <!-- Right Art Card (Firekeeper) -->
+    <div id="art-06" class="art-column">
+      <div class="art-img-wrap" data-layout-allow-overflow>
+        <img id="firekeeper-img" class="art-img" src="assets/images/scene06_firekeeper.jpg" data-layout-allow-overflow data-duration="30.5" />
+        <div class="art-gradient-overlay"></div>
+        <div class="art-info-overlay">
+          <div class="art-badge">长夜伴侣 / 真正解脱</div>
+          <h2 class="art-name">防火女 · 灭火之伴</h2>
+          <p class="art-desc">
+            "余灰大人，您还能听到我的声音吗……火已熄灭，但请别害怕，黑夜的尽头终有破晓！"
+          </p>
         </div>
-        <div class="card-quote quote-serene">“黑暗并非灾难，而是世界应有的安歇。”</div>
-        <div class="card-details">
-          <div class="detail-row"><span class="detail-bullet bullet-serene"></span><span>天地陷于纯净的静默，游魂与人类归于平静</span></div>
-          <div class="detail-row"><span class="detail-bullet bullet-serene"></span><span>褪去狂热的薪柴献祭，大地得以修养生息</span></div>
-          <div class="detail-row"><span class="detail-bullet bullet-serene"></span><span>黑暗中的低语：“灰烬大人，您还听得到我的声音吗？”</span></div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span>静默守护</span>
-        <span class="footer-highlight" style="color: #38bdf8;">听觉的相伴</span>
-      </div>
-    </div>
-
-    <div id="scene-06-card-3" class="card-item card-item-serene">
-      <div>
-        <div class="card-top">
-          <div class="card-icon-title">
-            <span class="card-icon">✨</span>
-            <span class="card-heading">微火终将新生</span>
-          </div>
-          <span class="card-badge badge-serene">未来的希望</span>
-        </div>
-        <div class="card-quote quote-serene">“在很久以后的黑暗尽头，定会有微小的火苗重新诞生。”</div>
-        <div class="card-details">
-          <div class="detail-row"><span class="detail-bullet bullet-serene"></span><span>毁灭不是终点，而是孕育新纪元的必经之路</span></div>
-          <div class="detail-row"><span class="detail-bullet bullet-serene"></span><span>自然律动不可阻挡，火与暗终有下一次潮起潮落</span></div>
-          <div class="detail-row"><span class="detail-bullet bullet-serene"></span><span>黑魂三部曲在此画上唯美、深邃且充满余韵的句点</span></div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span>微弱微光</span>
-        <span class="footer-highlight" style="color: #38bdf8;">破晓的预兆</span>
       </div>
     </div>
   </div>
 
+  <!-- Captions -->
   <div class="caption-container">
-    <div id="c-06-1" class="caption-box" style="opacity: 0;">初火终有熄灭的一天。</div>
-    <div id="c-06-2" class="caption-box" style="opacity: 0;">当防火女轻轻捧起那微弱如萤火的余烬，世界终于迎来了静谧的黑暗。</div>
-    <div id="c-06-3" class="caption-box" style="opacity: 0;">但正如她所言：在极其漫长的黑暗尽头，终会有一日，微小的火苗会再度诞生。</div>
+    <div id="c-06-1" class="caption-box" style="opacity: 0;">击败薪王化身后，整个世界的命运终于交到了你的手中！</div>
+    <div id="c-06-2" class="caption-box" style="opacity: 0;">继续传火？初火早已油尽灯枯，坐上去只能冒几点残星，毫无意义！</div>
+    <div id="c-06-3" class="caption-box" style="opacity: 0;">真正的解脱是把初火交给防火女：让烧了几万年的病态诅咒彻底熄灭！</div>
+    <div id="c-06-4" class="caption-box" style="opacity: 0;">世界迎来宁静长夜：在漫长的黑暗尽头，终有一日，微小的火苗会重获新生！</div>
   </div>
-
-  <div class="progress-track"><div id="p-06" class="progress-bar" style="background: linear-gradient(90deg, #0284c7, #38bdf8, #bae6fd); box-shadow: 0 0 10px #38bdf8;"></div></div>
 </div>
 <script>
 {{
   const tl = gsap.timeline({{ paused: true }});
   
-  // Background Ken Burns
-  tl.fromTo("#scene-06-bg", {{ scale: 1.0, y: 0 }}, {{ scale: 1.07, y: -15, duration: {dur}, ease: "none" }}, 0);
-  
-  // Headers
-  tl.fromTo(".header", {{ opacity: 0, y: -20 }}, {{ opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }}, 0.2);
-  tl.fromTo(".title-area", {{ opacity: 0, y: -25 }}, {{ opacity: 1, y: 0, duration: 1.0, ease: "power2.out" }}, 0.4);
-  
-  // Cards Stagger In
-  tl.fromTo("#scene-06-card-1", {{ opacity: 0, y: 40, scale: 0.96 }}, {{ opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.2)" }}, 0.8);
-  tl.fromTo("#scene-06-card-2", {{ opacity: 0, y: 40, scale: 0.96 }}, {{ opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.2)" }}, 1.2);
-  tl.fromTo("#scene-06-card-3", {{ opacity: 0, y: 40, scale: 0.96 }}, {{ opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.2)" }}, 1.6);
-  tl.to("#scene-06-card-1", {{ borderColor: "rgba(125, 211, 252, 0.9)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(125, 211, 252, 0.4)", duration: 0.5 }}, 0.8)
-    .to("#scene-06-card-1", {{ borderColor: "rgba(125, 211, 252, 0.3)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 25px rgba(125, 211, 252, 0.1)", duration: 0.5 }}, 3.8)
-    .to("#scene-06-card-2", {{ borderColor: "rgba(125, 211, 252, 0.9)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(125, 211, 252, 0.4)", duration: 0.5 }}, 3.8)
-    .to("#scene-06-card-2", {{ borderColor: "rgba(125, 211, 252, 0.3)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 25px rgba(125, 211, 252, 0.1)", duration: 0.5 }}, 9.8)
-    .to("#scene-06-card-3", {{ borderColor: "rgba(125, 211, 252, 0.9)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(125, 211, 252, 0.4)", duration: 0.5 }}, 9.8);
+  // Background Pan
+  tl.fromTo("#scene-06-bg", {{ scale: 1.0, y: 0 }}, {{ scale: 1.08, y: -25, duration: 30.5, ease: "none" }}, 0);
+  tl.fromTo("#firekeeper-img", {{ scale: 1.05 }}, {{ scale: 1.15, duration: 30.5, ease: "none" }}, 0);
+
+  // Layout In
+  tl.fromTo(".timeline-rail", {{ opacity: 0, y: -15 }}, {{ opacity: 1, y: 0, duration: 0.6 }}, 0.2);
+  tl.fromTo(".title-area", {{ opacity: 0, y: -20 }}, {{ opacity: 1, y: 0, duration: 0.8 }}, 0.4);
+  tl.fromTo("#art-06", {{ opacity: 0, x: 40 }}, {{ opacity: 1, x: 0, duration: 0.9, ease: "power2.out" }}, 0.6);
+
+  // Nodes Sequence
+  tl.fromTo("#node-06-1", {{ opacity: 0, y: 25 }}, {{ opacity: 1, y: 0, duration: 0.6 }}, 0.8);
+  tl.fromTo("#node-06-2", {{ opacity: 0, y: 25 }}, {{ opacity: 1, y: 0, duration: 0.6 }}, 5.8);
+  tl.fromTo("#node-06-3", {{ opacity: 0, y: 25 }}, {{ opacity: 1, y: 0, duration: 0.6 }}, 12.8);
 
   // Captions
-  tl.set("#c-06-1", {{ opacity: 1 }}, 0.50).set("#c-06-1", {{ opacity: 0 }}, 3.80);
-  tl.set("#c-06-2", {{ opacity: 1 }}, 3.80).set("#c-06-2", {{ opacity: 0 }}, 9.80);
-  tl.set("#c-06-3", {{ opacity: 1 }}, 9.80).set("#c-06-3", {{ opacity: 0 }}, 17.70);
-
-  // Progress Bar
-  tl.fromTo("#p-06", {{ scaleX: 0 }}, {{ scaleX: 1, duration: {dur}, ease: "none" }}, 0);
+  tl.set("#c-06-1", {{ opacity: 1 }}, 0.50).set("#c-06-1", {{ opacity: 0 }}, 5.60);
+  tl.set("#c-06-2", {{ opacity: 1 }}, 5.80).set("#c-06-2", {{ opacity: 0 }}, 12.50);
+  tl.set("#c-06-3", {{ opacity: 1 }}, 12.80).set("#c-06-3", {{ opacity: 0 }}, 20.20);
+  tl.set("#c-06-4", {{ opacity: 1 }}, 20.50).set("#c-06-4", {{ opacity: 0 }}, 29.50);
 
   window.__timelines["scene-06"] = tl;
 }}
 </script>
 </template>
 </body>
-</html>"""
+</html>
+"""
+    (OUT_DIR / 'scene-06.html').write_text(html)
 
-def build_all():
-    compositions_dir = ROOT / 'compositions'
-    compositions_dir.mkdir(parents=True, exist_ok=True)
-    
-    scene_durations = [18.5, 18.0, 22.0, 18.0, 20.5, 21.0]
-    
-    generators = [
-        generate_scene_01,
-        generate_scene_02,
-        generate_scene_03,
-        generate_scene_04,
-        generate_scene_05,
-        generate_scene_06
-    ]
-    
-    for idx, (gen, dur) in enumerate(zip(generators, scene_durations), 1):
-        target = compositions_dir / f"scene-0{idx}.html"
-        content = gen(dur)
-        target.write_text(content, encoding='utf-8')
-        print(f"Generated {target.name} (duration: {dur}s)")
+def main():
+    print("Generating scene-01.html...")
+    generate_scene_01()
+    print("Generating scene-02.html...")
+    generate_scene_02()
+    print("Generating scene-03.html...")
+    generate_scene_03()
+    print("Generating scene-04.html...")
+    generate_scene_04()
+    print("Generating scene-05.html...")
+    generate_scene_05()
+    print("Generating scene-06.html...")
+    generate_scene_06()
+    print("All scenes generated successfully!")
 
 if __name__ == '__main__':
-    build_all()
+    main()

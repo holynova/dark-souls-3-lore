@@ -13,7 +13,7 @@
   #root {
     position: absolute;
     inset: 0;
-    background: #08090d;
+    background: #06080d;
     color: #f1f5f9;
     font-family: LabChinese, -apple-system, sans-serif;
     overflow: hidden;
@@ -27,52 +27,62 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0.42;
-    filter: brightness(0.85) contrast(1.15) saturate(1.1);
+    opacity: 0.38;
+    filter: brightness(0.78) contrast(1.2) saturate(1.1);
   }
   .bg-overlay {
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at 50% 40%, rgba(8,9,13,0.3) 0%, rgba(6,7,10,0.92) 80%);
+    background: radial-gradient(circle at 50% 35%, rgba(6,8,13,0.3) 0%, rgba(5,6,9,0.92) 80%);
   }
   .ember-glow {
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at 50% 85%, rgba(245, 158, 11, 0.12) 0%, transparent 60%);
+    background: radial-gradient(circle at 50% 90%, rgba(245, 158, 11, 0.12) 0%, transparent 60%);
     pointer-events: none;
   }
 
-  /* Top Navigation */
-  .header {
+  /* Global Timeline Rail */
+  .timeline-rail {
     position: absolute;
     left: 80px;
-    top: 48px;
     right: 80px;
+    top: 36px;
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: center;
-    z-index: 10;
+    z-index: 15;
   }
-  .badge-chapter {
-    display: inline-flex;
+  .timeline-steps {
+    display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 8px 22px;
-    border-radius: 30px;
-    background: rgba(245, 158, 11, 0.16);
-    border: 1.5px solid rgba(245, 158, 11, 0.45);
+    gap: 8px;
+  }
+  .timeline-node {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #64748b;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .timeline-node.active {
+    background: rgba(245, 158, 11, 0.2);
     color: #fbbf24;
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+    border-color: rgba(245, 158, 11, 0.6);
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.25);
+  }
+  .timeline-arrow {
+    color: #475569;
+    font-size: 14px;
   }
   .topic-tag {
-    font-size: 22px;
+    font-size: 18px;
     color: #94a3b8;
     letter-spacing: 2px;
-    text-transform: uppercase;
-    font-weight: 500;
+    font-weight: 600;
   }
 
   /* Hero Title Area */
@@ -80,349 +90,466 @@
     position: absolute;
     left: 80px;
     right: 80px;
-    top: 120px;
-    text-align: center;
+    top: 96px;
     z-index: 10;
   }
   .main-title {
-    font-size: 64px;
+    font-size: 54px;
     font-weight: 900;
-    line-height: 1.2;
+    line-height: 1.15;
     margin: 0;
-    letter-spacing: 3px;
-    background: linear-gradient(135deg, #ffffff 15%, #fde68a 50%, #f59e0b 85%, #d97706 100%);
+    letter-spacing: 2px;
+    background: linear-gradient(135deg, #ffffff 20%, #fde68a 55%, #f59e0b 85%, #d97706 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 6px 20px rgba(0,0,0,0.8));
+    filter: drop-shadow(0 4px 15px rgba(0,0,0,0.8));
   }
-  .sub-title {
-    font-size: 26px;
-    color: #cbd5e1;
-    margin-top: 12px;
-    font-weight: 400;
-    letter-spacing: 3px;
+  .sub-tagline {
+    font-size: 22px;
+    color: #e2e8f0;
+    margin-top: 8px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .tagline-badge {
+    padding: 3px 10px;
+    border-radius: 6px;
+    background: rgba(239, 68, 68, 0.2);
+    border: 1px solid rgba(239, 68, 68, 0.45);
+    color: #fca5a5;
+    font-size: 15px;
+    font-weight: 700;
   }
 
-  /* Cards Container */
-  .cards-grid {
+  /* Split Layout Container */
+  .content-split {
     position: absolute;
     left: 80px;
     right: 80px;
-    top: 275px;
-    height: 590px;
+    top: 225px;
+    bottom: 125px;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 32px;
+    gap: 36px;
     z-index: 10;
   }
-  .card-item {
-    flex: 1;
-    height: 100%;
-    border-radius: 20px;
-    padding: 32px 30px;
-    background: linear-gradient(160deg, rgba(22, 27, 38, 0.82) 0%, rgba(10, 12, 18, 0.94) 100%);
-    border: 1.5px solid rgba(245, 158, 11, 0.3);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.7), 0 0 25px rgba(245, 158, 11, 0.1);
-    backdrop-filter: blur(16px);
+
+  /* Left Flow / Logic Column */
+  .logic-column {
+    flex: 1.15;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    gap: 16px;
+  }
+  .logic-box {
+    background: linear-gradient(145deg, rgba(17, 24, 39, 0.85) 0%, rgba(9, 13, 22, 0.92) 100%);
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 20px 24px;
     position: relative;
-    overflow: hidden;
+    backdrop-filter: blur(14px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
   }
-  .card-item::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, transparent, #f59e0b, transparent);
+  .logic-box.highlight {
+    border-color: rgba(245, 158, 11, 0.5);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 0 25px rgba(245, 158, 11, 0.15);
   }
-
-  .card-top {
+  .logic-box.danger {
+    border-color: rgba(239, 68, 68, 0.5);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 0 25px rgba(239, 68, 68, 0.15);
+  }
+  .box-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    margin-bottom: 8px;
+    gap: 12px;
+    margin-bottom: 10px;
   }
-  .card-icon-title {
-    display: flex;
-    align-items: center;
-    gap: 14px;
+  .box-pill {
+    font-size: 14px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 6px;
+    letter-spacing: 1px;
   }
-  .card-icon {
-    font-size: 32px;
+  .box-pill.gold {
+    background: rgba(245, 158, 11, 0.25);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.4);
   }
-  .card-heading {
-    font-size: 28px;
+  .box-pill.red {
+    background: rgba(239, 68, 68, 0.25);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+  }
+  .box-pill.blue {
+    background: rgba(59, 130, 246, 0.25);
+    color: #93c5fd;
+    border: 1px solid rgba(59, 130, 246, 0.4);
+  }
+  .box-title {
+    font-size: 24px;
     font-weight: 800;
     color: #f8fafc;
     letter-spacing: 1px;
   }
-  .card-badge {
-    font-size: 16px;
-    font-weight: 700;
-    padding: 4px 12px;
-    border-radius: 12px;
-    background: rgba(245, 158, 11, 0.2);
-    color: #fbbf24;
-    border: 1px solid rgba(245, 158, 11, 0.4);
-    letter-spacing: 1px;
-  }
-
-  .card-quote {
-    font-size: 19px;
-    color: #fbbf24;
-    font-style: italic;
-    line-height: 1.4;
-    margin: 10px 0 14px 0;
-    padding-left: 14px;
-    border-left: 3px solid #f59e0b;
-  }
-
-  .card-details {
+  .box-bullets {
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    margin-top: 10px;
+    gap: 8px;
   }
-  .detail-row {
+  .bullet-item {
+    font-size: 18px;
+    line-height: 1.45;
+    color: #cbd5e1;
     display: flex;
     align-items: flex-start;
-    gap: 12px;
-    font-size: 19px;
-    line-height: 1.5;
-    color: #cbd5e1;
+    gap: 10px;
   }
-  .detail-bullet {
-    width: 8px;
-    height: 8px;
+  .bullet-dot {
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     background: #f59e0b;
-    box-shadow: 0 0 8px #f59e0b;
     margin-top: 10px;
     flex-shrink: 0;
   }
-
-  .card-footer {
-    padding-top: 16px;
-    border-top: 1px solid rgba(255,255,255,0.08);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 17px;
-    color: #94a3b8;
+  .bullet-item b {
+    color: #fbbf24;
   }
-  .footer-highlight {
-    color: #f59e0b;
-    font-weight: 600;
+  .bullet-item.alert b {
+    color: #f87171;
   }
 
-  /* Bottom Captions & Progress */
-  .caption-container {
-    position: absolute;
-    left: 100px;
-    right: 100px;
-    bottom: 35px;
-    height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 20;
+  /* Right Art Card Column */
+  .art-column {
+    flex: 0.85;
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 2px solid rgba(245, 158, 11, 0.35);
+    background: #0d111a;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.15);
   }
-  .caption-box {
-    position: absolute;
-    background: rgba(10, 13, 20, 0.92);
-    backdrop-filter: blur(14px);
-    border: 1.5px solid rgba(245, 158, 11, 0.4);
-    padding: 12px 42px;
-    border-radius: 40px;
-    font-size: 32px;
-    font-weight: 600;
-    color: #ffffff;
-    box-shadow: 0 10px 35px rgba(0,0,0,0.8), 0 0 25px rgba(245, 158, 11, 0.15);
-    text-align: center;
-    white-space: nowrap;
-  }
-  .progress-track {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 5px;
-    background: rgba(255,255,255,0.08);
-    z-index: 30;
-  }
-  .progress-bar {
+  .art-img-wrap {
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, #ea580c, #f59e0b, #fbbf24);
-    box-shadow: 0 0 10px #f59e0b;
-    transform-origin: left;
+    position: relative;
+    overflow: hidden;
+  }
+  .art-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+  .art-gradient-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(6,8,13,0.1) 40%, rgba(6,8,13,0.95) 100%);
+  }
+  .art-info-overlay {
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    bottom: 24px;
+    z-index: 5;
+  }
+  .art-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    background: rgba(245, 158, 11, 0.25);
+    border: 1px solid rgba(245, 158, 11, 0.5);
+    color: #fbbf24;
+    margin-bottom: 8px;
+  }
+  .art-name {
+    font-size: 34px;
+    font-weight: 900;
+    color: #ffffff;
+    margin: 0 0 6px 0;
+    letter-spacing: 1.5px;
+    text-shadow: 0 3px 10px rgba(0,0,0,0.8);
+  }
+  .art-desc {
+    font-size: 17px;
+    color: #cbd5e1;
+    line-height: 1.4;
+    margin: 0;
   }
 
-  .cards-grid-4 {
+  /* Bottom Floating Subtitle (No Progress Bar!) */
+  .caption-container {
     position: absolute;
     left: 80px;
     right: 80px;
-    top: 275px;
-    height: 590px;
+    bottom: 28px;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 25;
+  }
+  .caption-box {
+    position: absolute;
+    background: rgba(8, 11, 18, 0.94);
+    backdrop-filter: blur(16px);
+    border: 1.5px solid rgba(245, 158, 11, 0.45);
+    padding: 14px 44px;
+    border-radius: 40px;
+    font-size: 30px;
+    font-weight: 700;
+    color: #ffffff;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.85), 0 0 25px rgba(245, 158, 11, 0.2);
+    text-align: center;
+    white-space: nowrap;
+    letter-spacing: 1px;
+  }
+
+  /* Special Grid for Scene 3 (4 Lords) */
+  .grid-4-lords {
+    position: absolute;
+    left: 80px;
+    right: 80px;
+    top: 220px;
+    bottom: 125px;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
+    gap: 20px;
     z-index: 10;
   }
+  .lord-card {
+    background: linear-gradient(160deg, rgba(20, 26, 40, 0.88) 0%, rgba(10, 13, 20, 0.95) 100%);
+    border: 1.5px solid rgba(255, 255, 255, 0.12);
+    border-radius: 18px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(14px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.7);
+    position: relative;
+  }
+  .lord-card.active-glow {
+    border-color: rgba(245, 158, 11, 0.6);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 25px rgba(245, 158, 11, 0.2);
+  }
+  .lord-card-img-wrap {
+    height: 230px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  .lord-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .lord-card-content {
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    justify-content: space-between;
+  }
+  .lord-card-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0 0 6px 0;
+  }
+  .lord-card-badge {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 5px;
+    background: rgba(245, 158, 11, 0.2);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    margin-bottom: 10px;
+  }
+  .lord-card-bullets {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .lord-bullet {
+    font-size: 15px;
+    line-height: 1.4;
+    color: #cbd5e1;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .lord-bullet-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #f59e0b;
+    margin-top: 7px;
+    flex-shrink: 0;
+  }
+  .lord-bullet b {
+    color: #fbbf24;
+  }
+
 </style>
-<div id="root" data-composition-id="scene-03" data-width="1920" data-height="1080">
+<div id="root" data-composition-id="scene-03" data-width="1920" data-height="1080" style="width:1920px;height:1080px;position:relative;overflow:hidden;">
   <div class="bg-wrap" data-layout-allow-overflow>
-    <img id="scene-03-bg" class="bg-img" src="assets/images/scene03_lords.jpg" alt="Lords of Cinder" data-layout-allow-overflow data-start="0" data-duration="22.0">
+    <img id="scene-03-bg" class="bg-img" src="assets/images/scene03_lords.jpg" data-layout-allow-overflow data-duration="31.0" />
     <div class="bg-overlay"></div>
     <div class="ember-glow"></div>
   </div>
 
-  <div class="header">
-    <div class="badge-chapter">🔥 CHAPTER II · 诸王悲歌</div>
-    <div class="topic-tag">DARK SOULS III · 叛离的四大薪王</div>
+  <div class="timeline-rail">
+    <div class="timeline-steps">
+      <div class="timeline-node">01 葛温源头</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">02 薪王罢工</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node active">03 叛逃真相</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">04 余灰催债</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">05 终局决战</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">06 灭火破晓</div>
+    </div>
+    <div class="topic-tag">深层机理 · 四大薪王档案</div>
   </div>
 
   <div class="title-area">
-    <h1 class="main-title">诸王悲歌 · 逃离传火宿命</h1>
-    <div class="sub-title">深渊侵蚀、保护落空、追逐暗潮与厌弃轮回——每位薪王皆有拒绝的绝望</div>
+    <h1 class="main-title">四大薪王档案 · 为何宁死不回王座</h1>
+    <div class="sub-tagline">
+      <span class="tagline-badge">血泪教训</span>
+      <span>他们每一个都曾全力以赴，换来的却是毁灭、背叛与永恒痛苦！</span>
+    </div>
   </div>
 
-  <div class="cards-grid-4">
-    <div id="scene-03-card-1" class="card-item">
-      <div>
-        <div class="card-top">
-          <div class="card-icon-title">
-            <span class="card-icon">🐺</span>
-            <span class="card-heading">法兰不死队</span>
+  <!-- 4 Columns Grid showcasing Nano Arts -->
+  <div class="grid-4-lords">
+    <!-- Lord 1: Abyss Watchers -->
+    <div id="lord-card-1" class="lord-card">
+      <div class="lord-card-img-wrap" data-layout-allow-overflow>
+        <img class="lord-card-img" src="assets/images/nano_abyss_watchers.jpg" data-layout-allow-overflow data-duration="31.0" />
+      </div>
+      <div class="lord-card-content">
+        <div>
+          <span class="lord-card-badge">法兰要塞</span>
+          <h3 class="lord-card-title">法兰不死队</h3>
+          <div class="lord-card-bullets">
+            <div class="lord-bullet"><div class="lord-bullet-dot"></div><span>饮狼血立誓<b>诛灭深渊</b></span></div>
+            <div class="lord-bullet"><div class="lord-bullet-dot"></div><span>自身却反遭深渊恶兆污染</span></div>
+            <div class="lord-bullet"><div class="lord-bullet-dot"></div><span>在老巢陷入<b>永恒同门互砍</b></span></div>
           </div>
         </div>
-        <span class="card-badge">深渊监视者</span>
-        <div class="card-quote">“饮下狼血誓言，终困深渊泥潭。”</div>
-        <div class="card-details">
-          <div class="detail-row"><span class="detail-bullet"></span><span>以法兰狼血维系誓约，监视深渊迹象</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>体内血液终遭深渊污染，灵柩前骨肉相残</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>不死之身陷入无休止的内耗互杀地狱</span></div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span>悲剧结局</span>
-        <span class="footer-highlight">永恒自残</span>
       </div>
     </div>
 
-    <div id="scene-03-card-2" class="card-item">
-      <div>
-        <div class="card-top">
-          <div class="card-icon-title">
-            <span class="card-icon">🛡️</span>
-            <span class="card-heading">巨人尤姆</span>
+    <!-- Lord 2: Yhorm the Giant -->
+    <div id="lord-card-2" class="lord-card">
+      <div class="lord-card-img-wrap" data-layout-allow-overflow>
+        <img class="lord-card-img" src="assets/images/nano_yhorm.jpg" data-layout-allow-overflow data-duration="31.0" />
+      </div>
+      <div class="lord-card-content">
+        <div>
+          <span class="lord-card-badge">罪业之都</span>
+          <h3 class="lord-card-title">巨人尤姆</h3>
+          <div class="lord-card-bullets">
+            <div class="lord-bullet"><div class="lord-bullet-dot"></div><span>以异族之躯<b>守护人族臣民</b></span></div>
+            <div class="lord-bullet"><div class="lord-bullet-dot"></div><span>舍身传火试图平息罪火暴动</span></div>
+            <div class="lord-bullet"><div class="lord-bullet-dot"></div><span>归来满城百姓<b>全部烧成黑炭</b></span></div>
           </div>
         </div>
-        <span class="card-badge">孤独守护者</span>
-        <div class="card-quote">“为了守护子民传火，归来唯余焦土。”</div>
-        <div class="card-details">
-          <div class="detail-row"><span class="detail-bullet"></span><span>身为异族巨人，却誓死庇护罪业之都人类</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>投身传火欲压制罪业火焰，却引发焚城浩劫</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>孤坐尸山王座，舍弃大盾心如死灰</span></div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span>昔日友人</span>
-        <span class="footer-highlight">洋葱骑士的约定</span>
       </div>
     </div>
 
-    <div id="scene-03-card-3" class="card-item">
-      <div>
-        <div class="card-top">
-          <div class="card-icon-title">
-            <span class="card-icon">🌊</span>
-            <span class="card-heading">埃尔德里奇</span>
+    <!-- Lord 3: Aldrich -->
+    <div id="lord-card-3" class="lord-card">
+      <div class="lord-card-img-wrap" data-layout-allow-overflow>
+        <img class="lord-card-img" src="assets/images/nano_aldrich.jpg" data-layout-allow-overflow data-duration="31.0" />
+      </div>
+      <div class="lord-card-content">
+        <div>
+          <span class="lord-card-badge">幽邃教堂</span>
+          <h3 class="lord-card-title">噬神者·埃尔德里奇</h3>
+          <div class="lord-card-bullets">
+            <div class="lord-bullet"><div class="lord-bullet-dot"></div><span>预见初火必熄，<b>深海时代</b>降临</span></div>
+            <div class="lord-bullet"><div class="lord-bullet-dot"></div><span>彻底抛弃传火神圣幻象</span></div>
+            <div class="lord-bullet"><div class="lord-bullet-dot"></div><span>直接攻入王城<b>吞噬葛温幺子</b></span></div>
           </div>
         </div>
-        <span class="card-badge">吞噬神明者</span>
-        <div class="card-quote">“预见火熄深海，吞噬神体追寻暗潮。”</div>
-        <div class="card-details">
-          <div class="detail-row"><span class="detail-bullet"></span><span>幽邃教堂圣职，因噬人恶习化为污秽泥泞</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>梦见火熄之后的“深海时代”，抛弃初火信仰</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>进军废弃王城亚诺尔隆德，残忍吞噬暗月之神</span></div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span>狂热狂信</span>
-        <span class="footer-highlight">深海幽邃时代</span>
       </div>
     </div>
 
-    <div id="scene-03-card-4" class="card-item">
-      <div>
-        <div class="card-top">
-          <div class="card-icon-title">
-            <span class="card-icon">👑</span>
-            <span class="card-heading">双王子</span>
+    <!-- Lord 4: Twin Princes -->
+    <div id="lord-card-4" class="lord-card">
+      <div class="lord-card-img-wrap" data-layout-allow-overflow>
+        <img class="lord-card-img" src="assets/images/nano_twin_princes.jpg" data-layout-allow-overflow data-duration="31.0" />
+      </div>
+      <div class="lord-card-content">
+        <div>
+          <span class="lord-card-badge">大书库顶层</span>
+          <h3 class="lord-card-title">洛斯里克双王子</h3>
+          <div class="lord-card-bullets">
+            <div class="lord-bullet"><div class="lord-bullet-dot"></div><span>自幼受尽王室配种<b>血脉折磨</b></span></div>
+            <div class="lord-bullet"><div class="lord-bullet-dot"></div><span>看透神权血祭的荒谬虚妄</span></div>
+            <div class="lord-bullet"><div class="lord-bullet-dot"></div><span><b>誓不当柴</b>，冷眼坐看火灭</span></div>
           </div>
         </div>
-        <span class="card-badge">王室血脉</span>
-        <div class="card-quote">“传火不过是诅咒，请容我们在此安睡。”</div>
-        <div class="card-details">
-          <div class="detail-row"><span class="detail-bullet"></span><span>洛斯里克王室为制造完美柴薪不择手段</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>王子双双残疾受咒，看透神权虚伪谎言</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>誓死拒绝登上薪王宝座，静待初火自灭</span></div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span>决然反抗</span>
-        <span class="footer-highlight">断绝传火血脉</span>
       </div>
     </div>
   </div>
 
+  <!-- Captions -->
   <div class="caption-container">
-    <div id="c-03-1" class="caption-box" style="opacity: 0;">法兰不死队在深渊的侵蚀中刀剑相向、自相残杀；</div>
-    <div id="c-03-2" class="caption-box" style="opacity: 0;">巨人尤姆在罪业之都的废墟中独守空亡与悲愿；</div>
-    <div id="c-03-3" class="caption-box" style="opacity: 0;">吞噬神明的埃尔德里奇狂热地追寻深海时代；</div>
-    <div id="c-03-4" class="caption-box" style="opacity: 0;">而洛斯里克双王子，则彻底厌倦了神权的诅咒与传火的荒诞轮回。</div>
+    <div id="c-03-1" class="caption-box" style="opacity: 0;">为什么薪王宁可去死也不回王座？因为全都是血泪教训！</div>
+    <div id="c-03-2" class="caption-box" style="opacity: 0;">法兰不死队饮狼血斩深渊反遭侵蚀，陷入永恒同门自残！</div>
+    <div id="c-03-3" class="caption-box" style="opacity: 0;">巨人尤姆为臣民传火，归来却见满城化为黑炭，万念俱灰！</div>
+    <div id="c-03-4" class="caption-box" style="opacity: 0;">埃尔德里奇预见深海时代，叛变吞食神明寻求蜕变！</div>
+    <div id="c-03-5" class="caption-box" style="opacity: 0;">双王子自幼受尽血脉诅咒，看透神权谎言，誓死拒当耗材！</div>
   </div>
-
-  <div class="progress-track"><div id="p-03" class="progress-bar"></div></div>
 </div>
 <script>
 {
   const tl = gsap.timeline({ paused: true });
   
-  // Background Ken Burns
-  tl.fromTo("#scene-03-bg", { scale: 1.05, y: 0 }, { scale: 1.0, y: 15, duration: 22.0, ease: "none" }, 0);
-  
-  // Headers
-  tl.fromTo(".header", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, 0.2);
-  tl.fromTo(".title-area", { opacity: 0, y: -25 }, { opacity: 1, y: 0, duration: 1.0, ease: "power2.out" }, 0.4);
-  
-  // Cards Stagger In
-  tl.fromTo("#scene-03-card-1", { opacity: 0, y: 40, scale: 0.95 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "back.out(1.2)" }, 0.5);
-  tl.fromTo("#scene-03-card-2", { opacity: 0, y: 40, scale: 0.95 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "back.out(1.2)" }, 0.8);
-  tl.fromTo("#scene-03-card-3", { opacity: 0, y: 40, scale: 0.95 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "back.out(1.2)" }, 1.1);
-  tl.fromTo("#scene-03-card-4", { opacity: 0, y: 40, scale: 0.95 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "back.out(1.2)" }, 1.4);
-  tl.to("#scene-03-card-1", { borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.35)", duration: 0.5 }, 0.5)
-    .to("#scene-03-card-1", { borderColor: "rgba(245, 158, 11, 0.3)", boxShadow: "0 15px 40px rgba(0,0,0,0.7), 0 0 25px rgba(245, 158, 11, 0.1)", duration: 0.5 }, 5.5)
-    .to("#scene-03-card-2", { borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.35)", duration: 0.5 }, 5.5)
-    .to("#scene-03-card-2", { borderColor: "rgba(245, 158, 11, 0.3)", boxShadow: "0 15px 40px rgba(0,0,0,0.7), 0 0 25px rgba(245, 158, 11, 0.1)", duration: 0.5 }, 10.8)
-    .to("#scene-03-card-3", { borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.35)", duration: 0.5 }, 10.8)
-    .to("#scene-03-card-3", { borderColor: "rgba(245, 158, 11, 0.3)", boxShadow: "0 15px 40px rgba(0,0,0,0.7), 0 0 25px rgba(245, 158, 11, 0.1)", duration: 0.5 }, 15.2)
-    .to("#scene-03-card-4", { borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.35)", duration: 0.5 }, 15.2);
+  // Background Pan
+  tl.fromTo("#scene-03-bg", { scale: 1.0, y: 0 }, { scale: 1.08, y: -25, duration: 31.0, ease: "none" }, 0);
+
+  // Layout In
+  tl.fromTo(".timeline-rail", { opacity: 0, y: -15 }, { opacity: 1, y: 0, duration: 0.6 }, 0.2);
+  tl.fromTo(".title-area", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.8 }, 0.4);
+
+  // Cards Sequence
+  tl.fromTo("#lord-card-1", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }, 0.8);
+  tl.fromTo("#lord-card-2", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }, 1.2);
+  tl.fromTo("#lord-card-3", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }, 1.6);
+  tl.fromTo("#lord-card-4", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }, 2.0);
+
+  // Highlighting active lord according to voiceover
+  tl.to("#lord-card-1", { borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 0 35px rgba(245, 158, 11, 0.4)", duration: 0.4 }, 5.5)
+    .to("#lord-card-1", { borderColor: "rgba(255, 255, 255, 0.12)", boxShadow: "0 15px 35px rgba(0,0,0,0.7)", duration: 0.4 }, 12.5);
+
+  tl.to("#lord-card-2", { borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 0 35px rgba(245, 158, 11, 0.4)", duration: 0.4 }, 12.5)
+    .to("#lord-card-2", { borderColor: "rgba(255, 255, 255, 0.12)", boxShadow: "0 15px 35px rgba(0,0,0,0.7)", duration: 0.4 }, 19.0);
+
+  tl.to("#lord-card-3", { borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 0 35px rgba(245, 158, 11, 0.4)", duration: 0.4 }, 19.0)
+    .to("#lord-card-3", { borderColor: "rgba(255, 255, 255, 0.12)", boxShadow: "0 15px 35px rgba(0,0,0,0.7)", duration: 0.4 }, 25.0);
+
+  tl.to("#lord-card-4", { borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 0 35px rgba(245, 158, 11, 0.4)", duration: 0.4 }, 25.0);
 
   // Captions
-  tl.set("#c-03-1", { opacity: 1 }, 0.50).set("#c-03-1", { opacity: 0 }, 5.50);
-  tl.set("#c-03-2", { opacity: 1 }, 5.50).set("#c-03-2", { opacity: 0 }, 10.80);
-  tl.set("#c-03-3", { opacity: 1 }, 10.80).set("#c-03-3", { opacity: 0 }, 15.20);
-  tl.set("#c-03-4", { opacity: 1 }, 15.20).set("#c-03-4", { opacity: 0 }, 20.90);
-
-  // Progress Bar
-  tl.fromTo("#p-03", { scaleX: 0 }, { scaleX: 1, duration: 22.0, ease: "none" }, 0);
+  tl.set("#c-03-1", { opacity: 1 }, 0.50).set("#c-03-1", { opacity: 0 }, 5.30);
+  tl.set("#c-03-2", { opacity: 1 }, 5.50).set("#c-03-2", { opacity: 0 }, 12.30);
+  tl.set("#c-03-3", { opacity: 1 }, 12.50).set("#c-03-3", { opacity: 0 }, 18.80);
+  tl.set("#c-03-4", { opacity: 1 }, 19.00).set("#c-03-4", { opacity: 0 }, 24.80);
+  tl.set("#c-03-5", { opacity: 1 }, 25.00).set("#c-03-5", { opacity: 0 }, 30.20);
 
   window.__timelines["scene-03"] = tl;
 }

@@ -3,12 +3,12 @@ import wave
 import struct
 import random
 
-def generate_ds3_bgm(output_path, duration=150.0, sample_rate=44100):
+def generate_ds3_bgm(output_path, duration=185.0, sample_rate=44100):
     total_samples = int(duration * sample_rate)
     samples = [0.0] * total_samples
 
-    # 1. Distant Cathedral Bell tolling at intervals (0s, 24s, 50s, 78s, 105s, 130s)
-    bell_times = [1.0, 26.0, 52.0, 78.0, 104.0, 130.0]
+    # 1. Distant Cathedral Bell tolling at intervals (0s, 26s, 53s, 84s, 114s, 142s, 168s)
+    bell_times = [1.0, 26.0, 53.0, 84.0, 114.0, 142.0, 168.0]
     bell_base_freq = 146.83 # D3 deep bronze bell
     bell_partials = [
         (0.5, 0.4, 6.0),   # sub
@@ -40,7 +40,6 @@ def generate_ds3_bgm(output_path, duration=150.0, sample_rate=44100):
         t = i / sample_rate
         # Breathing LFO
         lfo = 0.85 + 0.15 * math.sin(2 * math.pi * 0.08 * t)
-        lfo2 = 0.8 + 0.2 * math.cos(2 * math.pi * 0.05 * t)
         
         # Chord progression very slow: Dm -> Bb -> F -> C -> Dm
         cycle = (t % 32.0)
@@ -62,7 +61,6 @@ def generate_ds3_bgm(output_path, duration=150.0, sample_rate=44100):
         samples[i] += drone
 
     # 3. Solitary Poetic Piano / Harp Notes (Soul of Cinder / Gwyn melancholy theme)
-    # Notes in D minor: D4(293.66), F4(349.23), A4(440.0), G4(392.0), E4(329.63), C#4(277.18), Bb4(466.16), A3(220)
     piano_pattern = [
         # (time, freq, amp)
         (3.0, 440.0, 0.4),  # A4
@@ -88,12 +86,22 @@ def generate_ds3_bgm(output_path, duration=150.0, sample_rate=44100):
         (89.5, 440.0, 0.45), # A4
         (91.0, 369.99, 0.55), # F#4
         
-        (112.0, 440.0, 0.4),
-        (114.0, 349.23, 0.4),
-        (116.0, 329.63, 0.35),
-        (118.0, 293.66, 0.5),
-        (122.0, 220.0, 0.4),
-        (136.0, 293.66, 0.35),
+        # Scene 5: Kiln & Gwyn Phase 2 motif (Plin Plin Plon)
+        (124.0, 493.88, 0.55), # B4 (Plin)
+        (125.5, 440.0, 0.5),   # A4 (Plin)
+        (127.0, 369.99, 0.6),  # F#4 (Plon)
+        (130.0, 440.0, 0.45),
+        (132.0, 392.0, 0.4),
+        (134.0, 349.23, 0.45),
+        (136.5, 293.66, 0.5),
+        
+        # Scene 6: End of fire calm and reflective
+        (148.0, 440.0, 0.38),
+        (150.5, 349.23, 0.35),
+        (153.0, 329.63, 0.32),
+        (156.0, 293.66, 0.4),
+        (162.0, 220.0, 0.35),
+        (168.0, 146.83, 0.3),  # Deep D3
     ]
 
     for p_time, freq, amp in piano_pattern:
@@ -118,7 +126,7 @@ def generate_ds3_bgm(output_path, duration=150.0, sample_rate=44100):
     norm_factor = 0.65 / max_val
 
     # Apply fade out at end
-    fade_len = int(5.0 * sample_rate)
+    fade_len = int(6.0 * sample_rate)
     for i in range(fade_len):
         idx = total_samples - fade_len + i
         samples[idx] *= (fade_len - i) / fade_len
@@ -137,4 +145,4 @@ def generate_ds3_bgm(output_path, duration=150.0, sample_rate=44100):
     print("BGM generated successfully:", output_path)
 
 if __name__ == '__main__':
-    generate_ds3_bgm('/Users/sym/Code/dark-souls-3-lore/assets/audio/bgm_dark_souls.wav', duration=150.0)
+    generate_ds3_bgm('/Users/sym/Code/dark-souls-3-lore/assets/audio/bgm_dark_souls.wav', duration=185.0)

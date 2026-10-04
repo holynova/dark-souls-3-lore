@@ -13,7 +13,7 @@
   #root {
     position: absolute;
     inset: 0;
-    background: #08090d;
+    background: #06080d;
     color: #f1f5f9;
     font-family: LabChinese, -apple-system, sans-serif;
     overflow: hidden;
@@ -27,52 +27,62 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0.42;
-    filter: brightness(0.85) contrast(1.15) saturate(1.1);
+    opacity: 0.38;
+    filter: brightness(0.78) contrast(1.2) saturate(1.1);
   }
   .bg-overlay {
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at 50% 40%, rgba(8,9,13,0.3) 0%, rgba(6,7,10,0.92) 80%);
+    background: radial-gradient(circle at 50% 35%, rgba(6,8,13,0.3) 0%, rgba(5,6,9,0.92) 80%);
   }
   .ember-glow {
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at 50% 85%, rgba(245, 158, 11, 0.12) 0%, transparent 60%);
+    background: radial-gradient(circle at 50% 90%, rgba(245, 158, 11, 0.12) 0%, transparent 60%);
     pointer-events: none;
   }
 
-  /* Top Navigation */
-  .header {
+  /* Global Timeline Rail */
+  .timeline-rail {
     position: absolute;
     left: 80px;
-    top: 48px;
     right: 80px;
+    top: 36px;
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: center;
-    z-index: 10;
+    z-index: 15;
   }
-  .badge-chapter {
-    display: inline-flex;
+  .timeline-steps {
+    display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 8px 22px;
-    border-radius: 30px;
-    background: rgba(245, 158, 11, 0.16);
-    border: 1.5px solid rgba(245, 158, 11, 0.45);
+    gap: 8px;
+  }
+  .timeline-node {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #64748b;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .timeline-node.active {
+    background: rgba(245, 158, 11, 0.2);
     color: #fbbf24;
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+    border-color: rgba(245, 158, 11, 0.6);
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.25);
+  }
+  .timeline-arrow {
+    color: #475569;
+    font-size: 14px;
   }
   .topic-tag {
-    font-size: 22px;
+    font-size: 18px;
     color: #94a3b8;
     letter-spacing: 2px;
-    text-transform: uppercase;
-    font-weight: 500;
+    font-weight: 600;
   }
 
   /* Hero Title Area */
@@ -80,311 +90,431 @@
     position: absolute;
     left: 80px;
     right: 80px;
-    top: 120px;
-    text-align: center;
+    top: 96px;
     z-index: 10;
   }
   .main-title {
-    font-size: 64px;
+    font-size: 54px;
     font-weight: 900;
-    line-height: 1.2;
+    line-height: 1.15;
     margin: 0;
-    letter-spacing: 3px;
-    background: linear-gradient(135deg, #ffffff 15%, #fde68a 50%, #f59e0b 85%, #d97706 100%);
+    letter-spacing: 2px;
+    background: linear-gradient(135deg, #ffffff 20%, #fde68a 55%, #f59e0b 85%, #d97706 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 6px 20px rgba(0,0,0,0.8));
+    filter: drop-shadow(0 4px 15px rgba(0,0,0,0.8));
   }
-  .sub-title {
-    font-size: 26px;
-    color: #cbd5e1;
-    margin-top: 12px;
-    font-weight: 400;
-    letter-spacing: 3px;
+  .sub-tagline {
+    font-size: 22px;
+    color: #e2e8f0;
+    margin-top: 8px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .tagline-badge {
+    padding: 3px 10px;
+    border-radius: 6px;
+    background: rgba(239, 68, 68, 0.2);
+    border: 1px solid rgba(239, 68, 68, 0.45);
+    color: #fca5a5;
+    font-size: 15px;
+    font-weight: 700;
   }
 
-  /* Cards Container */
-  .cards-grid {
+  /* Split Layout Container */
+  .content-split {
     position: absolute;
     left: 80px;
     right: 80px;
-    top: 275px;
-    height: 590px;
+    top: 225px;
+    bottom: 125px;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 32px;
+    gap: 36px;
     z-index: 10;
   }
-  .card-item {
-    flex: 1;
-    height: 100%;
-    border-radius: 20px;
-    padding: 32px 30px;
-    background: linear-gradient(160deg, rgba(22, 27, 38, 0.82) 0%, rgba(10, 12, 18, 0.94) 100%);
-    border: 1.5px solid rgba(245, 158, 11, 0.3);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.7), 0 0 25px rgba(245, 158, 11, 0.1);
-    backdrop-filter: blur(16px);
+
+  /* Left Flow / Logic Column */
+  .logic-column {
+    flex: 1.15;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    gap: 16px;
+  }
+  .logic-box {
+    background: linear-gradient(145deg, rgba(17, 24, 39, 0.85) 0%, rgba(9, 13, 22, 0.92) 100%);
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 20px 24px;
     position: relative;
-    overflow: hidden;
+    backdrop-filter: blur(14px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
   }
-  .card-item::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, transparent, #f59e0b, transparent);
+  .logic-box.highlight {
+    border-color: rgba(245, 158, 11, 0.5);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 0 25px rgba(245, 158, 11, 0.15);
   }
-
-  .card-top {
+  .logic-box.danger {
+    border-color: rgba(239, 68, 68, 0.5);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 0 25px rgba(239, 68, 68, 0.15);
+  }
+  .box-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    margin-bottom: 8px;
+    gap: 12px;
+    margin-bottom: 10px;
   }
-  .card-icon-title {
-    display: flex;
-    align-items: center;
-    gap: 14px;
+  .box-pill {
+    font-size: 14px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 6px;
+    letter-spacing: 1px;
   }
-  .card-icon {
-    font-size: 32px;
+  .box-pill.gold {
+    background: rgba(245, 158, 11, 0.25);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.4);
   }
-  .card-heading {
-    font-size: 28px;
+  .box-pill.red {
+    background: rgba(239, 68, 68, 0.25);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+  }
+  .box-pill.blue {
+    background: rgba(59, 130, 246, 0.25);
+    color: #93c5fd;
+    border: 1px solid rgba(59, 130, 246, 0.4);
+  }
+  .box-title {
+    font-size: 24px;
     font-weight: 800;
     color: #f8fafc;
     letter-spacing: 1px;
   }
-  .card-badge {
-    font-size: 16px;
-    font-weight: 700;
-    padding: 4px 12px;
-    border-radius: 12px;
-    background: rgba(245, 158, 11, 0.2);
-    color: #fbbf24;
-    border: 1px solid rgba(245, 158, 11, 0.4);
-    letter-spacing: 1px;
-  }
-
-  .card-quote {
-    font-size: 19px;
-    color: #fbbf24;
-    font-style: italic;
-    line-height: 1.4;
-    margin: 10px 0 14px 0;
-    padding-left: 14px;
-    border-left: 3px solid #f59e0b;
-  }
-
-  .card-details {
+  .box-bullets {
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    margin-top: 10px;
+    gap: 8px;
   }
-  .detail-row {
+  .bullet-item {
+    font-size: 18px;
+    line-height: 1.45;
+    color: #cbd5e1;
     display: flex;
     align-items: flex-start;
-    gap: 12px;
-    font-size: 19px;
-    line-height: 1.5;
-    color: #cbd5e1;
+    gap: 10px;
   }
-  .detail-bullet {
-    width: 8px;
-    height: 8px;
+  .bullet-dot {
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     background: #f59e0b;
-    box-shadow: 0 0 8px #f59e0b;
     margin-top: 10px;
     flex-shrink: 0;
   }
+  .bullet-item b {
+    color: #fbbf24;
+  }
+  .bullet-item.alert b {
+    color: #f87171;
+  }
 
-  .card-footer {
-    padding-top: 16px;
-    border-top: 1px solid rgba(255,255,255,0.08);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  /* Right Art Card Column */
+  .art-column {
+    flex: 0.85;
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 2px solid rgba(245, 158, 11, 0.35);
+    background: #0d111a;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.15);
+  }
+  .art-img-wrap {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  .art-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+  .art-gradient-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(6,8,13,0.1) 40%, rgba(6,8,13,0.95) 100%);
+  }
+  .art-info-overlay {
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    bottom: 24px;
+    z-index: 5;
+  }
+  .art-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    background: rgba(245, 158, 11, 0.25);
+    border: 1px solid rgba(245, 158, 11, 0.5);
+    color: #fbbf24;
+    margin-bottom: 8px;
+  }
+  .art-name {
+    font-size: 34px;
+    font-weight: 900;
+    color: #ffffff;
+    margin: 0 0 6px 0;
+    letter-spacing: 1.5px;
+    text-shadow: 0 3px 10px rgba(0,0,0,0.8);
+  }
+  .art-desc {
     font-size: 17px;
-    color: #94a3b8;
-  }
-  .footer-highlight {
-    color: #f59e0b;
-    font-weight: 600;
+    color: #cbd5e1;
+    line-height: 1.4;
+    margin: 0;
   }
 
-  /* Bottom Captions & Progress */
+  /* Bottom Floating Subtitle (No Progress Bar!) */
   .caption-container {
     position: absolute;
-    left: 100px;
-    right: 100px;
-    bottom: 35px;
-    height: 80px;
+    left: 80px;
+    right: 80px;
+    bottom: 28px;
+    height: 72px;
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 20;
+    z-index: 25;
   }
   .caption-box {
     position: absolute;
-    background: rgba(10, 13, 20, 0.92);
-    backdrop-filter: blur(14px);
-    border: 1.5px solid rgba(245, 158, 11, 0.4);
-    padding: 12px 42px;
+    background: rgba(8, 11, 18, 0.94);
+    backdrop-filter: blur(16px);
+    border: 1.5px solid rgba(245, 158, 11, 0.45);
+    padding: 14px 44px;
     border-radius: 40px;
-    font-size: 32px;
-    font-weight: 600;
+    font-size: 30px;
+    font-weight: 700;
     color: #ffffff;
-    box-shadow: 0 10px 35px rgba(0,0,0,0.8), 0 0 25px rgba(245, 158, 11, 0.15);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.85), 0 0 25px rgba(245, 158, 11, 0.2);
     text-align: center;
     white-space: nowrap;
+    letter-spacing: 1px;
   }
-  .progress-track {
+
+  /* Special Grid for Scene 3 (4 Lords) */
+  .grid-4-lords {
     position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 5px;
-    background: rgba(255,255,255,0.08);
-    z-index: 30;
+    left: 80px;
+    right: 80px;
+    top: 220px;
+    bottom: 125px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    z-index: 10;
   }
-  .progress-bar {
+  .lord-card {
+    background: linear-gradient(160deg, rgba(20, 26, 40, 0.88) 0%, rgba(10, 13, 20, 0.95) 100%);
+    border: 1.5px solid rgba(255, 255, 255, 0.12);
+    border-radius: 18px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(14px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.7);
+    position: relative;
+  }
+  .lord-card.active-glow {
+    border-color: rgba(245, 158, 11, 0.6);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 25px rgba(245, 158, 11, 0.2);
+  }
+  .lord-card-img-wrap {
+    height: 230px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  .lord-card-img {
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, #ea580c, #f59e0b, #fbbf24);
-    box-shadow: 0 0 10px #f59e0b;
-    transform-origin: left;
+    object-fit: cover;
+  }
+  .lord-card-content {
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    justify-content: space-between;
+  }
+  .lord-card-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0 0 6px 0;
+  }
+  .lord-card-badge {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 5px;
+    background: rgba(245, 158, 11, 0.2);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    margin-bottom: 10px;
+  }
+  .lord-card-bullets {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .lord-bullet {
+    font-size: 15px;
+    line-height: 1.4;
+    color: #cbd5e1;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .lord-bullet-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #f59e0b;
+    margin-top: 7px;
+    flex-shrink: 0;
+  }
+  .lord-bullet b {
+    color: #fbbf24;
   }
 
 </style>
-<div id="root" data-composition-id="scene-04" data-width="1920" data-height="1080">
+<div id="root" data-composition-id="scene-04" data-width="1920" data-height="1080" style="width:1920px;height:1080px;position:relative;overflow:hidden;">
   <div class="bg-wrap" data-layout-allow-overflow>
-    <img id="scene-04-bg" class="bg-img" src="assets/images/scene04_ritual.jpg" alt="Ritual of Cinders" data-layout-allow-overflow data-start="0" data-duration="18.0">
+    <img id="scene-04-bg" class="bg-img" src="assets/images/scene01_awakening.jpg" data-layout-allow-overflow data-duration="29.5" />
     <div class="bg-overlay"></div>
     <div class="ember-glow"></div>
   </div>
 
-  <div class="header">
-    <div class="badge-chapter">🔥 CHAPTER III · 薪柴归座</div>
-    <div class="topic-tag">DARK SOULS III · 猎王誓约与火炉启封</div>
+  <div class="timeline-rail">
+    <div class="timeline-steps">
+      <div class="timeline-node">01 葛温源头</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">02 薪王罢工</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">03 叛逃真相</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node active">04 余灰催债</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">05 终局决战</div>
+      <div class="timeline-arrow">➔</div>
+      <div class="timeline-node">06 灭火破晓</div>
+    </div>
+    <div class="topic-tag">执行机制 · 终极保底清道夫</div>
   </div>
 
   <div class="title-area">
-    <h1 class="main-title">猎王之誓 · 柴薪共鸣</h1>
-    <div class="sub-title">无火余灰踏平诸神，四大薪王柴薪归位，点燃通往最初火炉的通天烈焰</div>
+    <h1 class="main-title">保底机制 · 叫醒灰烬强制催债</h1>
+    <div class="sub-tagline">
+      <span class="tagline-badge">物理执法</span>
+      <span>薪王不肯自己走回王座？那就踏遍世界，把他们的柴薪全部按回原位！</span>
+    </div>
   </div>
 
-  <div class="cards-grid">
-    <div id="scene-04-card-1" class="card-item">
-      <div>
-        <div class="card-top">
-          <div class="card-icon-title">
-            <span class="card-icon">⚔️</span>
-            <span class="card-heading">灰烬的猎王征途</span>
-          </div>
-          <span class="card-badge">凡躯弑神</span>
+  <div class="content-split">
+    <!-- Left Logic Flow -->
+    <div class="logic-column">
+      <div id="node-04-1" class="logic-box">
+        <div class="box-header">
+          <span class="box-pill gold">应急机制 · 唤醒灰烬</span>
+          <span class="box-title">谁是余灰？连当柴资格都没有的淘汰者</span>
         </div>
-        <div class="card-quote">“虽为卑微余灰，却斩下了王者的头颅。”</div>
-        <div class="card-details">
-          <div class="detail-row"><span class="detail-bullet"></span><span>踏遍冷冽谷、地下监牢、罪业之都与洛斯里克</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>以凡人之躯接连斩杀传奇薪王与古老神明</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>将四位薪王的柴薪遗蜕强行带回传火祭祀场</span></div>
+        <div class="box-bullets">
+          <div class="bullet-item"><div class="bullet-dot"></div><span>曾经尝试传火但神魂不够强大、直接烧成<b>残渣飞灰的失败者</b>。</span></div>
+          <div class="bullet-item"><div class="bullet-dot"></div><span>无欲无求，拥有<b>无限次死而复生</b>的绝对本能！</span></div>
         </div>
       </div>
-      <div class="card-footer">
-        <span>征伐印记</span>
-        <span class="footer-highlight">余火的觉醒</span>
+
+      <div id="node-04-2" class="logic-box danger">
+        <div class="box-header">
+          <span class="box-pill red">催债使命 · 物理斩杀</span>
+          <span class="box-title">强行执行：不回王座就斩首拖回</span>
+        </div>
+        <div class="box-bullets">
+          <div class="bullet-item alert"><div class="bullet-dot"></div><span>踏平洛斯里克高墙、深入法兰沼泽、荡平冷冽谷与罪业之都！</span></div>
+          <div class="bullet-item"><div class="bullet-dot"></div><span><b>将叛逃薪王逐一斩杀</b>，割下柴薪与头颅带回祭祀场！</span></div>
+        </div>
+      </div>
+
+      <div id="node-04-3" class="logic-box highlight">
+        <div class="box-header">
+          <span class="box-pill blue">柴薪共鸣 · 通道开启</span>
+          <span class="box-title">四王归位：轰然打开最初火炉之门</span>
+        </div>
+        <div class="box-bullets">
+          <div class="bullet-item"><div class="bullet-dot"></div><span>当四大柴薪在王座上重燃，古老的传火能量彻底汇聚。</span></div>
+          <div class="bullet-item"><div class="bullet-dot"></div><span>营火共鸣，打通通往世界尽头<b>最初火炉</b>的传送大门！</span></div>
+        </div>
       </div>
     </div>
 
-    <div id="scene-04-card-2" class="card-item">
-      <div>
-        <div class="card-top">
-          <div class="card-icon-title">
-            <span class="card-icon">🔥</span>
-            <span class="card-heading">王座共鸣仪式</span>
-          </div>
-          <span class="card-badge">柴薪聚首</span>
+    <!-- Right Art Card (Ritual) -->
+    <div id="art-04" class="art-column">
+      <div class="art-img-wrap" data-layout-allow-overflow>
+        <img id="ritual-img" class="art-img" src="assets/images/scene04_ritual.jpg" data-layout-allow-overflow data-duration="29.5" />
+        <div class="art-gradient-overlay"></div>
+        <div class="art-info-overlay">
+          <div class="art-badge">终极执行官 / 无火余灰</div>
+          <h2 class="art-name">灰烬归位仪式</h2>
+          <p class="art-desc">
+            "若王者不归，余灰便跨越千难万险，将他们的遗骸按上冰冷的石座！"
+          </p>
         </div>
-        <div class="card-quote">“当柴薪齐聚，王座将化作通往世界尽头的桥梁。”</div>
-        <div class="card-details">
-          <div class="detail-row"><span class="detail-bullet"></span><span>四王柴薪安放于空悬王座，鲁道斯自燃为引</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>五道冲天金焰与古老符文在大理石地面交织</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>千万代积攒的余火之力汇聚于余灰一身体内</span></div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span>仪轨圆满</span>
-        <span class="footer-highlight">烈火燃透圣所</span>
-      </div>
-    </div>
-
-    <div id="scene-04-card-3" class="card-item">
-      <div>
-        <div class="card-top">
-          <div class="card-icon-title">
-            <span class="card-icon">🌀</span>
-            <span class="card-heading">最初火炉之门</span>
-          </div>
-          <span class="card-badge">时空尽头</span>
-        </div>
-        <div class="card-quote">“时空倾覆碎裂，通往世界一切宿命的终局。”</div>
-        <div class="card-details">
-          <div class="detail-row"><span class="detail-bullet"></span><span>传火祭祀场营火爆发出穿梭时空的引力</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>余灰被传送至坍塌倾斜的“初始火炉”</span></div>
-          <div class="detail-row"><span class="detail-bullet"></span><span>世界的尽头，一切历史与王国在这里挤压成废墟</span></div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span>彼岸归宿</span>
-        <span class="footer-highlight">叩响终局之门</span>
       </div>
     </div>
   </div>
 
+  <!-- Captions -->
   <div class="caption-container">
-    <div id="c-04-1" class="caption-box" style="opacity: 0;">余灰虽被世人鄙夷为无火无光之物，却唯有他们踏上猎王之路。</div>
-    <div id="c-04-2" class="caption-box" style="opacity: 0;">斩杀薪王，集齐四大柴薪，置于祭祀场的王座之上。</div>
-    <div id="c-04-3" class="caption-box" style="opacity: 0;">当余火再度激荡，通往最初火炉的道路轰然开启。</div>
+    <div id="c-04-1" class="caption-box" style="opacity: 0;">薪王全跑路怎么办？传火体制启动终极应急预案：唤醒无火余灰！</div>
+    <div id="c-04-2" class="caption-box" style="opacity: 0;">余灰是当年连当柴资格都没有、直接烧成飞灰的淘汰者！</div>
+    <div id="c-04-3" class="caption-box" style="opacity: 0;">余灰目标极其纯粹：薪王不肯主动返工，那就全部砍翻按回王座！</div>
+    <div id="c-04-4" class="caption-box" style="opacity: 0;">当四大柴薪在祭祀场集齐共鸣，通往最初火炉的道路轰然开启！</div>
   </div>
-
-  <div class="progress-track"><div id="p-04" class="progress-bar"></div></div>
 </div>
 <script>
 {
   const tl = gsap.timeline({ paused: true });
   
-  // Background Ken Burns
-  tl.fromTo("#scene-04-bg", { scale: 1.0, y: 0 }, { scale: 1.08, y: -20, duration: 18.0, ease: "none" }, 0);
-  
-  // Headers
-  tl.fromTo(".header", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, 0.2);
-  tl.fromTo(".title-area", { opacity: 0, y: -25 }, { opacity: 1, y: 0, duration: 1.0, ease: "power2.out" }, 0.4);
-  
-  // Cards Stagger In
-  tl.fromTo("#scene-04-card-1", { opacity: 0, y: 40, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.2)" }, 0.8);
-  tl.fromTo("#scene-04-card-2", { opacity: 0, y: 40, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.2)" }, 1.2);
-  tl.fromTo("#scene-04-card-3", { opacity: 0, y: 40, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.2)" }, 1.6);
-  tl.to("#scene-04-card-1", { borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.35)", duration: 0.5 }, 0.8)
-    .to("#scene-04-card-1", { borderColor: "rgba(245, 158, 11, 0.3)", boxShadow: "0 15px 40px rgba(0,0,0,0.7), 0 0 25px rgba(245, 158, 11, 0.1)", duration: 0.5 }, 5.2)
-    .to("#scene-04-card-2", { borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.35)", duration: 0.5 }, 5.2)
-    .to("#scene-04-card-2", { borderColor: "rgba(245, 158, 11, 0.3)", boxShadow: "0 15px 40px rgba(0,0,0,0.7), 0 0 25px rgba(245, 158, 11, 0.1)", duration: 0.5 }, 10.6)
-    .to("#scene-04-card-3", { borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.35)", duration: 0.5 }, 10.6);
+  // Background Pan
+  tl.fromTo("#scene-04-bg", { scale: 1.0, y: 0 }, { scale: 1.08, y: -25, duration: 29.5, ease: "none" }, 0);
+  tl.fromTo("#ritual-img", { scale: 1.05 }, { scale: 1.15, duration: 29.5, ease: "none" }, 0);
+
+  // Layout In
+  tl.fromTo(".timeline-rail", { opacity: 0, y: -15 }, { opacity: 1, y: 0, duration: 0.6 }, 0.2);
+  tl.fromTo(".title-area", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.8 }, 0.4);
+  tl.fromTo("#art-04", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.9, ease: "power2.out" }, 0.6);
+
+  // Nodes Sequence
+  tl.fromTo("#node-04-1", { opacity: 0, y: 25 }, { opacity: 1, y: 0, duration: 0.6 }, 0.8);
+  tl.fromTo("#node-04-2", { opacity: 0, y: 25 }, { opacity: 1, y: 0, duration: 0.6 }, 12.5);
+  tl.fromTo("#node-04-3", { opacity: 0, y: 25 }, { opacity: 1, y: 0, duration: 0.6 }, 20.5);
 
   // Captions
-  tl.set("#c-04-1", { opacity: 1 }, 0.50).set("#c-04-1", { opacity: 0 }, 5.20);
-  tl.set("#c-04-2", { opacity: 1 }, 5.20).set("#c-04-2", { opacity: 0 }, 10.60);
-  tl.set("#c-04-3", { opacity: 1 }, 10.60).set("#c-04-3", { opacity: 0 }, 16.80);
-
-  // Progress Bar
-  tl.fromTo("#p-04", { scaleX: 0 }, { scaleX: 1, duration: 18.0, ease: "none" }, 0);
+  tl.set("#c-04-1", { opacity: 1 }, 0.50).set("#c-04-1", { opacity: 0 }, 5.80);
+  tl.set("#c-04-2", { opacity: 1 }, 6.00).set("#c-04-2", { opacity: 0 }, 12.20);
+  tl.set("#c-04-3", { opacity: 1 }, 12.50).set("#c-04-3", { opacity: 0 }, 20.20);
+  tl.set("#c-04-4", { opacity: 1 }, 20.50).set("#c-04-4", { opacity: 0 }, 28.50);
 
   window.__timelines["scene-04"] = tl;
 }
