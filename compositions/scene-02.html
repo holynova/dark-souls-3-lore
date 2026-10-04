@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"></head>
+<body>
+<template>
+<style>
+
+  @font-face {
+    font-family: LabChinese;
+    src: url('assets/PingFang.ttc');
+  }
+  * { box-sizing: border-box; }
+  #root {
+    position: absolute;
+    inset: 0;
+    background: #08090d;
+    color: #f1f5f9;
+    font-family: LabChinese, -apple-system, sans-serif;
+    overflow: hidden;
+  }
+  .bg-wrap {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+  .bg-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.42;
+    filter: brightness(0.85) contrast(1.15) saturate(1.1);
+  }
+  .bg-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 40%, rgba(8,9,13,0.3) 0%, rgba(6,7,10,0.92) 80%);
+  }
+  .ember-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 85%, rgba(245, 158, 11, 0.12) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  /* Top Navigation */
+  .header {
+    position: absolute;
+    left: 80px;
+    top: 48px;
+    right: 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+  }
+  .badge-chapter {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 22px;
+    border-radius: 30px;
+    background: rgba(245, 158, 11, 0.16);
+    border: 1.5px solid rgba(245, 158, 11, 0.45);
+    color: #fbbf24;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+  }
+  .topic-tag {
+    font-size: 22px;
+    color: #94a3b8;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* Hero Title Area */
+  .title-area {
+    position: absolute;
+    left: 80px;
+    right: 80px;
+    top: 120px;
+    text-align: center;
+    z-index: 10;
+  }
+  .main-title {
+    font-size: 64px;
+    font-weight: 900;
+    line-height: 1.2;
+    margin: 0;
+    letter-spacing: 3px;
+    background: linear-gradient(135deg, #ffffff 15%, #fde68a 50%, #f59e0b 85%, #d97706 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 6px 20px rgba(0,0,0,0.8));
+  }
+  .sub-title {
+    font-size: 26px;
+    color: #cbd5e1;
+    margin-top: 12px;
+    font-weight: 400;
+    letter-spacing: 3px;
+  }
+
+  /* Cards Container */
+  .cards-grid {
+    position: absolute;
+    left: 80px;
+    right: 80px;
+    top: 275px;
+    height: 590px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    z-index: 10;
+  }
+  .card-item {
+    flex: 1;
+    height: 100%;
+    border-radius: 20px;
+    padding: 32px 30px;
+    background: linear-gradient(160deg, rgba(22, 27, 38, 0.82) 0%, rgba(10, 12, 18, 0.94) 100%);
+    border: 1.5px solid rgba(245, 158, 11, 0.3);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.7), 0 0 25px rgba(245, 158, 11, 0.1);
+    backdrop-filter: blur(16px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+  .card-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, #f59e0b, transparent);
+  }
+
+  .card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .card-icon-title {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .card-icon {
+    font-size: 32px;
+  }
+  .card-heading {
+    font-size: 28px;
+    font-weight: 800;
+    color: #f8fafc;
+    letter-spacing: 1px;
+  }
+  .card-badge {
+    font-size: 16px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 12px;
+    background: rgba(245, 158, 11, 0.2);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    letter-spacing: 1px;
+  }
+
+  .card-quote {
+    font-size: 19px;
+    color: #fbbf24;
+    font-style: italic;
+    line-height: 1.4;
+    margin: 10px 0 14px 0;
+    padding-left: 14px;
+    border-left: 3px solid #f59e0b;
+  }
+
+  .card-details {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 10px;
+  }
+  .detail-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 19px;
+    line-height: 1.5;
+    color: #cbd5e1;
+  }
+  .detail-bullet {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #f59e0b;
+    box-shadow: 0 0 8px #f59e0b;
+    margin-top: 10px;
+    flex-shrink: 0;
+  }
+
+  .card-footer {
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 17px;
+    color: #94a3b8;
+  }
+  .footer-highlight {
+    color: #f59e0b;
+    font-weight: 600;
+  }
+
+  /* Bottom Captions & Progress */
+  .caption-container {
+    position: absolute;
+    left: 100px;
+    right: 100px;
+    bottom: 35px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+  }
+  .caption-box {
+    position: absolute;
+    background: rgba(10, 13, 20, 0.92);
+    backdrop-filter: blur(14px);
+    border: 1.5px solid rgba(245, 158, 11, 0.4);
+    padding: 12px 42px;
+    border-radius: 40px;
+    font-size: 32px;
+    font-weight: 600;
+    color: #ffffff;
+    box-shadow: 0 10px 35px rgba(0,0,0,0.8), 0 0 25px rgba(245, 158, 11, 0.15);
+    text-align: center;
+    white-space: nowrap;
+  }
+  .progress-track {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 5px;
+    background: rgba(255,255,255,0.08);
+    z-index: 30;
+  }
+  .progress-bar {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #ea580c, #f59e0b, #fbbf24);
+    box-shadow: 0 0 10px #f59e0b;
+    transform-origin: left;
+  }
+
+</style>
+<div id="root" data-composition-id="scene-02" data-width="1920" data-height="1080">
+  <div class="bg-wrap" data-layout-allow-overflow>
+    <img id="scene-02-bg" class="bg-img" src="assets/images/scene02_firelink.jpg" alt="Firelink Shrine" data-layout-allow-overflow data-start="0" data-duration="18.0">
+    <div class="bg-overlay"></div>
+    <div class="ember-glow"></div>
+  </div>
+
+  <div class="header">
+    <div class="badge-chapter">🔥 CHAPTER I · 传火祭祀场</div>
+    <div class="topic-tag">DARK SOULS III · 避难所与王座</div>
+  </div>
+
+  <div class="title-area">
+    <h1 class="main-title">王座空悬 · 诸王背誓</h1>
+    <div class="sub-title">昔日传火诸王弃座而逃，唯有鲁道斯与盲眼防火女静候灰烬</div>
+  </div>
+
+  <div class="cards-grid">
+    <div id="scene-02-card-1" class="card-item">
+      <div>
+        <div class="card-top">
+          <div class="card-icon-title">
+            <span class="card-icon">🪑</span>
+            <span class="card-heading">宏伟的石质王座</span>
+          </div>
+          <span class="card-badge">五座王座</span>
+        </div>
+        <div class="card-quote">“刻着伟大薪王名号的宝座，如今尽是虚无。”</div>
+        <div class="card-details">
+          <div class="detail-row"><span class="detail-bullet"></span><span>环形祭祀场中立着五位薪王的石制王座</span></div>
+          <div class="detail-row"><span class="detail-bullet"></span><span>本应履行传火重责的诸王，纷纷潜逃故地</span></div>
+          <div class="detail-row"><span class="detail-bullet"></span><span>空旷的殿堂在微光中诉说着绝望与苍凉</span></div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span>祭祀场异象</span>
+        <span class="footer-highlight">王不见王</span>
+      </div>
+    </div>
+
+    <div id="scene-02-card-2" class="card-item">
+      <div>
+        <div class="card-top">
+          <div class="card-icon-title">
+            <span class="card-icon">👑</span>
+            <span class="card-heading">放逐者鲁道斯</span>
+          </div>
+          <span class="card-badge">唯一留守</span>
+        </div>
+        <div class="card-quote">“即使身材矮小，我亦是实实在在的薪王。”</div>
+        <div class="card-details">
+          <div class="detail-row"><span class="detail-bullet"></span><span>唯有库尔兰的鲁道斯独自端坐于王座之上</span></div>
+          <div class="detail-row"><span class="detail-bullet"></span><span>精通灵魂炼成技艺，洞悉火之时代的残酷</span></div>
+          <div class="detail-row"><span class="detail-bullet"></span><span>自愿再次化为柴薪，等待最后的一刻</span></div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span>坚定意志</span>
+        <span class="footer-highlight">静待薪尽火灭</span>
+      </div>
+    </div>
+
+    <div id="scene-02-card-3" class="card-item">
+      <div>
+        <div class="card-top">
+          <div class="card-icon-title">
+            <span class="card-icon">👁️</span>
+            <span class="card-heading">盲眼防火女</span>
+          </div>
+          <span class="card-badge">营火侍从</span>
+        </div>
+        <div class="card-quote">“愿余火引导灰烬大人的道路。”</div>
+        <div class="card-details">
+          <div class="detail-row"><span class="detail-bullet"></span><span>眼蒙银质冠冕，守护螺旋剑插落的篝火</span></div>
+          <div class="detail-row"><span class="detail-bullet"></span><span>将游离无主的灵魂转化为灰烬力量的源泉</span></div>
+          <div class="detail-row"><span class="detail-bullet"></span><span>默默见证无数灰烬的出发、沉沦与新生</span></div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span>神圣契约</span>
+        <span class="footer-highlight">守候营火余温</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="caption-container">
+    <div id="c-02-1" class="caption-box" style="opacity: 0;">传火祭祀场中，高耸的五座王座如今大多空空如也。</div>
+    <div id="c-02-2" class="caption-box" style="opacity: 0;">为了维系濒临崩溃的世界，昔日薪王被钟声唤醒，</div>
+    <div id="c-02-3" class="caption-box" style="opacity: 0;">然而他们却选择背弃宿命，逃离传火的使命，回到了各自荒芜的故土。</div>
+  </div>
+
+  <div class="progress-track"><div id="p-02" class="progress-bar"></div></div>
+</div>
+<script>
+{
+  const tl = gsap.timeline({ paused: true });
+  
+  // Background Ken Burns
+  tl.fromTo("#scene-02-bg", { scale: 1.0, x: 0 }, { scale: 1.07, x: -15, duration: 18.0, ease: "none" }, 0);
+  
+  // Headers
+  tl.fromTo(".header", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, 0.2);
+  tl.fromTo(".title-area", { opacity: 0, y: -25 }, { opacity: 1, y: 0, duration: 1.0, ease: "power2.out" }, 0.4);
+  
+  // Cards Stagger In
+  tl.fromTo("#scene-02-card-1", { opacity: 0, y: 40, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.2)" }, 0.8);
+  tl.fromTo("#scene-02-card-2", { opacity: 0, y: 40, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.2)" }, 1.2);
+  tl.fromTo("#scene-02-card-3", { opacity: 0, y: 40, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.2)" }, 1.6);
+  tl.to("#scene-02-card-1", { borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.35)", duration: 0.5 }, 0.8)
+    .to("#scene-02-card-1", { borderColor: "rgba(245, 158, 11, 0.3)", boxShadow: "0 15px 40px rgba(0,0,0,0.7), 0 0 25px rgba(245, 158, 11, 0.1)", duration: 0.5 }, 4.8)
+    .to("#scene-02-card-2", { borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.35)", duration: 0.5 }, 4.8)
+    .to("#scene-02-card-2", { borderColor: "rgba(245, 158, 11, 0.3)", boxShadow: "0 15px 40px rgba(0,0,0,0.7), 0 0 25px rgba(245, 158, 11, 0.1)", duration: 0.5 }, 10.2)
+    .to("#scene-02-card-3", { borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.35)", duration: 0.5 }, 10.2);
+
+  // Captions
+  tl.set("#c-02-1", { opacity: 1 }, 0.50).set("#c-02-1", { opacity: 0 }, 4.80);
+  tl.set("#c-02-2", { opacity: 1 }, 4.80).set("#c-02-2", { opacity: 0 }, 10.20);
+  tl.set("#c-02-3", { opacity: 1 }, 10.20).set("#c-02-3", { opacity: 0 }, 16.80);
+
+  // Progress Bar
+  tl.fromTo("#p-02", { scaleX: 0 }, { scaleX: 1, duration: 18.0, ease: "none" }, 0);
+
+  window.__timelines["scene-02"] = tl;
+}
+</script>
+</template>
+</body>
+</html>

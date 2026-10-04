@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"></head>
+<body>
+<template>
+<style>
+
+  @font-face {
+    font-family: LabChinese;
+    src: url('assets/PingFang.ttc');
+  }
+  * { box-sizing: border-box; }
+  #root {
+    position: absolute;
+    inset: 0;
+    background: #08090d;
+    color: #f1f5f9;
+    font-family: LabChinese, -apple-system, sans-serif;
+    overflow: hidden;
+  }
+  .bg-wrap {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+  .bg-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.42;
+    filter: brightness(0.85) contrast(1.15) saturate(1.1);
+  }
+  .bg-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 40%, rgba(8,9,13,0.3) 0%, rgba(6,7,10,0.92) 80%);
+  }
+  .ember-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 85%, rgba(245, 158, 11, 0.12) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  /* Top Navigation */
+  .header {
+    position: absolute;
+    left: 80px;
+    top: 48px;
+    right: 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+  }
+  .badge-chapter {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 22px;
+    border-radius: 30px;
+    background: rgba(245, 158, 11, 0.16);
+    border: 1.5px solid rgba(245, 158, 11, 0.45);
+    color: #fbbf24;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+  }
+  .topic-tag {
+    font-size: 22px;
+    color: #94a3b8;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* Hero Title Area */
+  .title-area {
+    position: absolute;
+    left: 80px;
+    right: 80px;
+    top: 120px;
+    text-align: center;
+    z-index: 10;
+  }
+  .main-title {
+    font-size: 64px;
+    font-weight: 900;
+    line-height: 1.2;
+    margin: 0;
+    letter-spacing: 3px;
+    background: linear-gradient(135deg, #ffffff 15%, #fde68a 50%, #f59e0b 85%, #d97706 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 6px 20px rgba(0,0,0,0.8));
+  }
+  .sub-title {
+    font-size: 26px;
+    color: #cbd5e1;
+    margin-top: 12px;
+    font-weight: 400;
+    letter-spacing: 3px;
+  }
+
+  /* Cards Container */
+  .cards-grid {
+    position: absolute;
+    left: 80px;
+    right: 80px;
+    top: 275px;
+    height: 590px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    z-index: 10;
+  }
+  .card-item {
+    flex: 1;
+    height: 100%;
+    border-radius: 20px;
+    padding: 32px 30px;
+    background: linear-gradient(160deg, rgba(22, 27, 38, 0.82) 0%, rgba(10, 12, 18, 0.94) 100%);
+    border: 1.5px solid rgba(245, 158, 11, 0.3);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.7), 0 0 25px rgba(245, 158, 11, 0.1);
+    backdrop-filter: blur(16px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+  .card-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, #f59e0b, transparent);
+  }
+
+  .card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .card-icon-title {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .card-icon {
+    font-size: 32px;
+  }
+  .card-heading {
+    font-size: 28px;
+    font-weight: 800;
+    color: #f8fafc;
+    letter-spacing: 1px;
+  }
+  .card-badge {
+    font-size: 16px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 12px;
+    background: rgba(245, 158, 11, 0.2);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    letter-spacing: 1px;
+  }
+
+  .card-quote {
+    font-size: 19px;
+    color: #fbbf24;
+    font-style: italic;
+    line-height: 1.4;
+    margin: 10px 0 14px 0;
+    padding-left: 14px;
+    border-left: 3px solid #f59e0b;
+  }
+
+  .card-details {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 10px;
+  }
+  .detail-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 19px;
+    line-height: 1.5;
+    color: #cbd5e1;
+  }
+  .detail-bullet {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #f59e0b;
+    box-shadow: 0 0 8px #f59e0b;
+    margin-top: 10px;
+    flex-shrink: 0;
+  }
+
+  .card-footer {
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 17px;
+    color: #94a3b8;
+  }
+  .footer-highlight {
+    color: #f59e0b;
+    font-weight: 600;
+  }
+
+  /* Bottom Captions & Progress */
+  .caption-container {
+    position: absolute;
+    left: 100px;
+    right: 100px;
+    bottom: 35px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+  }
+  .caption-box {
+    position: absolute;
+    background: rgba(10, 13, 20, 0.92);
+    backdrop-filter: blur(14px);
+    border: 1.5px solid rgba(245, 158, 11, 0.4);
+    padding: 12px 42px;
+    border-radius: 40px;
+    font-size: 32px;
+    font-weight: 600;
+    color: #ffffff;
+    box-shadow: 0 10px 35px rgba(0,0,0,0.8), 0 0 25px rgba(245, 158, 11, 0.15);
+    text-align: center;
+    white-space: nowrap;
+  }
+  .progress-track {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 5px;
+    background: rgba(255,255,255,0.08);
+    z-index: 30;
+  }
+  .progress-bar {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #ea580c, #f59e0b, #fbbf24);
+    box-shadow: 0 0 10px #f59e0b;
+    transform-origin: left;
+  }
+
+</style>
+<div id="root" data-composition-id="scene-01" data-width="1920" data-height="1080">
+  <div class="bg-wrap" data-layout-allow-overflow>
+    <img id="scene-01-bg" class="bg-img" src="assets/images/scene01_awakening.jpg" alt="Cemetery of Ash" data-layout-allow-overflow data-start="0" data-duration="18.5">
+    <div class="bg-overlay"></div>
+    <div class="ember-glow"></div>
+  </div>
+
+  <div class="header">
+    <div class="badge-chapter">🔥 PROLOGUE · 灰烬墓地</div>
+    <div class="topic-tag">DARK SOULS III · 传火史诗</div>
+  </div>
+
+  <div class="title-area">
+    <h1 class="main-title">火渐熄 · 王不见王</h1>
+    <div class="sub-title">昔日初火衰微停滞，沉睡千年的无火余灰破棺而起</div>
+  </div>
+
+  <div class="cards-grid">
+    <div id="scene-01-card-1" class="card-item">
+      <div>
+        <div class="card-top">
+          <div class="card-icon-title">
+            <span class="card-icon">🕯️</span>
+            <span class="card-heading">初火濒临熄灭</span>
+          </div>
+          <span class="card-badge">世界崩坏</span>
+        </div>
+        <div class="card-quote">“当火光渐熄，唯有黑暗笼罩一切。”</div>
+        <div class="card-details">
+          <div class="detail-row"><span class="detail-bullet"></span><span>传火轮回历经千万载，初火衰竭殆尽</span></div>
+          <div class="detail-row"><span class="detail-bullet"></span><span>时空在洛斯里克汇聚挤压，世界趋向停滞</span></div>
+          <div class="detail-row"><span class="detail-bullet"></span><span>古老的钟声敲响，宣告世界末日的降临</span></div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span>天地异象</span>
+        <span class="footer-highlight">终末钟声鸣响</span>
+      </div>
+    </div>
+
+    <div id="scene-01-card-2" class="card-item">
+      <div>
+        <div class="card-top">
+          <div class="card-icon-title">
+            <span class="card-icon">⚔️</span>
+            <span class="card-heading">无火的余灰</span>
+          </div>
+          <span class="card-badge">主角身份</span>
+        </div>
+        <div class="card-quote">“连薪柴都不够资格燃烧的灰烬之躯。”</div>
+        <div class="card-details">
+          <div class="detail-row"><span class="detail-bullet"></span><span>曾经尝试传火却化为灰烬的不死人</span></div>
+          <div class="detail-row"><span class="detail-bullet"></span><span>不具柴薪资格，却对余火有着无尽渴望</span></div>
+          <div class="detail-row"><span class="detail-bullet"></span><span>被赋予最后猎王与挽救宿命的艰难重任</span></div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span>宿命烙印</span>
+        <span class="footer-highlight">追寻余火的灰烬</span>
+      </div>
+    </div>
+
+    <div id="scene-01-card-3" class="card-item">
+      <div>
+        <div class="card-top">
+          <div class="card-icon-title">
+            <span class="card-icon">🏰</span>
+            <span class="card-heading">洛斯里克高墙</span>
+          </div>
+          <span class="card-badge">王土沉沦</span>
+        </div>
+        <div class="card-quote">“漂泊王土的交汇处，通往火炉的险阻。”</div>
+        <div class="card-details">
+          <div class="detail-row"><span class="detail-bullet"></span><span>巍峨高墙自大地隆起，隔绝了诸王故地</span></div>
+          <div class="detail-row"><span class="detail-bullet"></span><span>骑士化为游魂，羽翼恶魔徘徊城头</span></div>
+          <div class="detail-row"><span class="detail-bullet"></span><span>灰烬走出墓地，踏上凶险莫测的征程</span></div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span>初始征途</span>
+        <span class="footer-highlight">踏出墓地之门</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="caption-container">
+    <div id="c-01-1" class="caption-box" style="opacity: 0;">火渐熄，王不见王。</div>
+    <div id="c-01-2" class="caption-box" style="opacity: 0;">当最初的薪火再次衰微，洛斯里克的钟声响彻荒原。</div>
+    <div id="c-01-3" class="caption-box" style="opacity: 0;">那些曾经为了传火燃烧自身、却力有不逮化为尘埃的无火余灰，</div>
+    <div id="c-01-4" class="caption-box" style="opacity: 0;">自沉睡千年的墓穴中再次苏醒。</div>
+  </div>
+
+  <div class="progress-track"><div id="p-01" class="progress-bar"></div></div>
+</div>
+<script>
+{
+  const tl = gsap.timeline({ paused: true });
+  
+  // Background Ken Burns
+  tl.fromTo("#scene-01-bg", { scale: 1.0, y: 0 }, { scale: 1.08, y: -20, duration: 18.5, ease: "none" }, 0);
+  
+  // Title & Header In
+  tl.fromTo(".header", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, 0.2);
+  tl.fromTo(".title-area", { opacity: 0, y: -25 }, { opacity: 1, y: 0, duration: 1.0, ease: "power2.out" }, 0.4);
+  
+  // Cards Stagger In
+  tl.fromTo("#scene-01-card-1", { opacity: 0, y: 40, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.2)" }, 0.8);
+  tl.fromTo("#scene-01-card-2", { opacity: 0, y: 40, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.2)" }, 1.2);
+  tl.fromTo("#scene-01-card-3", { opacity: 0, y: 40, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.2)" }, 1.6);
+  tl.to("#scene-01-card-1", { borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.35)", duration: 0.5 }, 0.8)
+    .to("#scene-01-card-1", { borderColor: "rgba(245, 158, 11, 0.3)", boxShadow: "0 15px 40px rgba(0,0,0,0.7), 0 0 25px rgba(245, 158, 11, 0.1)", duration: 0.5 }, 8.5)
+    .to("#scene-01-card-2", { borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.35)", duration: 0.5 }, 8.5)
+    .to("#scene-01-card-2", { borderColor: "rgba(245, 158, 11, 0.3)", boxShadow: "0 15px 40px rgba(0,0,0,0.7), 0 0 25px rgba(245, 158, 11, 0.1)", duration: 0.5 }, 13.8)
+    .to("#scene-01-card-3", { borderColor: "rgba(245, 158, 11, 0.9)", boxShadow: "0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(245, 158, 11, 0.35)", duration: 0.5 }, 13.8);
+
+  // Captions
+  tl.set("#c-01-1", { opacity: 1 }, 0.50).set("#c-01-1", { opacity: 0 }, 3.80);
+  tl.set("#c-01-2", { opacity: 1 }, 3.80).set("#c-01-2", { opacity: 0 }, 8.50);
+  tl.set("#c-01-3", { opacity: 1 }, 8.50).set("#c-01-3", { opacity: 0 }, 13.80);
+  tl.set("#c-01-4", { opacity: 1 }, 13.80).set("#c-01-4", { opacity: 0 }, 17.50);
+
+  // Progress Bar
+  tl.fromTo("#p-01", { scaleX: 0 }, { scaleX: 1, duration: 18.5, ease: "none" }, 0);
+
+  window.__timelines["scene-01"] = tl;
+}
+</script>
+</template>
+</body>
+</html>
