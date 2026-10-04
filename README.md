@@ -1,55 +1,47 @@
-# 《黑暗之魂3：万年传火因果与终局破晓》视频工程
+# 黑暗之魂3 · 传火因果与终局
 
-[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live%20Online-orange)](https://holynova.github.io/dark-souls-3-lore/)
-[![Resolution](https://img.shields.io/badge/Resolution-1080P%20Full%20HD-blue)](https://holynova.github.io/dark-souls-3-lore/)
-[![Duration](https://img.shields.io/badge/Duration-2m%2051s%20(5145%20Frames)-green)](https://holynova.github.io/dark-souls-3-lore/)
-[![Engine](https://img.shields.io/badge/Engine-Hyperframe%20%2B%20GSAP-red)](https://github.com/heygen-com/hyperframes)
+以中文旁白和分幕视频回顾传火循环、薪王与灰烬的终局选择。
 
-使用 **Hyperframe** 视听动效引擎与 Nano 级 AI 概念美术深度打造的《黑暗之魂3》底层剧情逻辑解析视频。
+A Chinese narrated video exploring the linking of the fire, Lords of Cinder and final choices.
 
-彻底抛弃故弄玄虚的黑话，采用通俗直接的硬核语言与因果时间线，慷慨激昂地解析万年传火骗局的前因后果：从神王葛温的私欲投火，到黑魂3初火枯竭、薪王集体罢工跑路，再到体制叫醒淘汰者无火余灰物理催债，直至世界尽头决战化身与熄灭初火迎来真正新生。
+[在线体验](https://dark-souls-3-lore.xiaosang.cc/) · [源码](https://github.com/holynova/dark-souls-3-lore)
 
-- **在线网页播放**：[https://holynova.github.io/dark-souls-3-lore/](https://holynova.github.io/dark-souls-3-lore/)
-- **本地渲染成品**：[`dark_souls_3_lore.mp4`](dark_souls_3_lore.mp4) (1080P 30FPS · 2分51秒 · 76.6MB)
+![黑暗之魂3 · 传火因果与终局：真实页面截图](./assets/readme/screenshot.png)
 
----
+## 可以做什么
 
-## 📽️ 因果时间线分幕章节
+- 播放器与剧情章节共同呈现故事线索。
+- 保留合成时间线、图像、旁白与成片。
 
-| 章节 | 时间轴 | 主题 | 核心因果逻辑 | Nano 概念原画 |
-| :--- | :--- | :--- | :--- | :--- |
-| **01 · 起源前因** | 00:00 – 00:25 | 葛温投火 · 宇宙级诅咒诞生 | **【因】** 为维系神权统治，神王以身投火建立千年献祭铁律，给全人类套上不死人诅咒 | `nano_gwyn.jpg` |
-| **02 · 体系暴雷** | 00:25 – 00:52 | 初火油尽 · 薪王集体撂挑子 | **【转】** 初火枯竭，双王子摆烂拒传！祭祀场敲钟掘墓，昔日老薪王全体罢工逃回老家 | `nano_twin_princes.jpg` |
-| **03 · 诸王档案** | 00:52 – 01:23 | 四大薪王 · 宁死不当耗材 | **【析】** 不死队同门自残、尤姆臣民全灭、埃尔德里奇深海食神、双王子誓死拒当柴 | `nano_abyss_watchers.jpg`<br>`nano_yhorm.jpg`<br>`nano_aldrich.jpg` |
-| **04 · 终极保底** | 01:23 – 01:53 | 无火余灰 · 叫醒淘汰者物理催债 | **【机】** 启动终极应急预案唤醒未成灰残渣，踏遍天下将逃跑薪王全部斩首按回王座 | `scene04_ritual.jpg` |
-| **05 · 宿命决战** | 01:53 – 02:21 | 初始火炉 · 薪王化身与流血暗日 | **【决】** 流血暗日坍缩世界，战胜历代千万英雄执念集合体，钢琴三连音斩断万年原罪 | `scene05_kiln.jpg` |
-| **06 · 终局破晓** | 02:21 – 02:51 | 灭火归真 · 斩断诅咒静待破晓 | **【果】** 拒绝残火苟延，托付初火给防火女彻底熄火，深邃长夜尽头静待清澈新生火苗 | `scene06_firekeeper.jpg` |
+## 观看与工程
 
----
+打开在线页面播放，或选择章节定位观看。包含主线与结局剧透。
 
-## 🎨 视听设计与工程亮点
+[打开成片](https://dark-souls-3-lore.xiaosang.cc/dark_souls_3_lore.mp4) · [仓库中的视频](./dark_souls_3_lore.mp4)
 
-1. **零进度条沉浸设计**：彻底移除画面底部的进度条干扰，保证画面如电影级纪录片般干净纯粹；
-2. **极简逻辑排版**：杜绝大段长篇文字堆砌，采用大号醒目标题、因果方块（`【起因】`、`【转折】`、`【后果】`）与高密度要点 Bullets；
-3. **Nano 概念原画精制**：为太阳王葛温、洛斯里克双王子、法兰不死队、巨人尤姆、噬神者埃尔德里奇生成专属 4K 构图插画；
-4. **慷慨激昂云健配音**：采用高亢、宏大、充满激情的音色与快节奏叙事，彻底说人话；
-5. **暗黑管弦与钢琴混音**：大提琴低沉低鸣、青铜古钟远鸣与二阶段葛温钢琴三连音（Plin Plin Plon）四轨混音；
-6. **响应式 GitHub Pages 影院**：支持毫秒级时间跳转、双语/旁白字幕实时高亮跟读、剧情逻辑拓扑图谱及原画灯箱。
+实测成片：1920 × 1080，30 fps，H.264 + AAC；时长 2:51，文件约 17.2 MiB。
 
----
+`index.html` 是公开播放器；`composition.html` 与 `compositions/` 保留视频合成源码。旁白和配乐在 `assets/`。
 
-## 🚀 本地开发与二次渲染
+## 本地预览
 
 ```bash
-# 生成语音与时间戳元数据
-python3 generate_audio.py
-
-# 生成背景音乐与音效
-python3 generate_bgm.py
-
-# 构建分幕 HTML 模板
-python3 build_scenes.py
-
-# 本地渲染生成完整 MP4 视频
-npx hyperframes render -o dark_souls_3_lore.mp4 --workers 1
+python3 -m http.server 8080
 ```
+
+打开 http://localhost:8080/。播放器直接使用仓库成片，无需先渲染。
+
+重新渲染需安装工程依赖和可用的 Chrome；在 HyperFrames 中使用 `composition.html` 合成入口，避免把播放器页面当作视频时间线。
+
+影视化剧情是作者的剪辑与解释，游戏角色、官方素材及相关商标归各自权利人；这是非官方项目。
+
+<img src="./assets/readme/qr.png" width="144" alt="扫码打开https://dark-souls-3-lore.xiaosang.cc/">
+
+## 发布
+
+```bash
+npx --yes wrangler@4.128.0 deploy --dry-run --config wrangler.jsonc
+npx --yes wrangler@4.128.0 deploy --config wrangler.jsonc
+```
+
+从 `main` 同一提交在本地手动发布到Cloudflare Workers。正式地址：[https://dark-souls-3-lore.xiaosang.cc/](https://dark-souls-3-lore.xiaosang.cc/)。 `.assetsignore` 限定公开播放器/站点资源，排除合成工程、开发文件与未供页面使用的大体积音频/字体。

@@ -4,3 +4,5 @@ node_modules
 .waveform-cache
 .hyperframes
 assets/PingFang.ttc
+
+.wrangler/
